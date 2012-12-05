@@ -18,6 +18,7 @@ class control
     protected $content;
     protected $val;
     protected $label;
+    protected $tip;
     protected $feedback;
     protected $attributes = array();
     protected $name;
@@ -108,7 +109,14 @@ class control
             $this : $this->{__FUNCTION__}
         ;
     }
-
+    
+    public function tip(/* $value */)
+    {
+        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+            $this : $this->{__FUNCTION__}
+        ;
+    }
+    
     public function val(/* $value */)
     {
         if (func_num_args() == 1)
