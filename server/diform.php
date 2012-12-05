@@ -168,8 +168,7 @@ class diform
         {
             if (($name = $control->name))
             {
-                flog($name);
-                $o[$name]    =   $control->checkValidity() !== true;
+                $o[$name]    =   $control->checkValidity();
             }
         }
         flog('form check_validity', $o);
