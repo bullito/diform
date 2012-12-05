@@ -17,14 +17,15 @@ class validator
     public static function check($control)
     {
         $o  =   array();
+        
         foreach(static::$rules as $rule => $func)
         {
-            $o[$rule]  =   $func($control);
+            $o[$rule]  =   ($valid = $func($control)) === true ? false : $valid;
         }
         
         foreach($control->rules() as $rule => $func)
         {
-            $o['custom-'.$rule]  =   $func($control);
+            $o['custom-'.$rule]  =   ($valid = $func($control)) === true ? false : $valid;
         }
         
         return array_filter($o) ?: true;
