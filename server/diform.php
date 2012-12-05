@@ -10,7 +10,11 @@ class diform
     /** @var string  */
 
     const PATH = __DIR__;
-
+    
+    /**
+     *
+     * @var array|of|\diform\control 
+     */
     protected $controls = array();
     public $data;
     
@@ -155,5 +159,16 @@ class diform
     public function prepare()
     {
         return $this;
+    }
+    
+    public function checkValidity()
+    {
+        $o  =   array();
+        foreach($this->controls as $control)
+        {
+            $o[$control->name()]    =   $control->checkValidity() !== true;
+        }
+        
+        return array_filter($o) ?: true;
     }
 }
