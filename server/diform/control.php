@@ -204,17 +204,7 @@ class control
 
     public function checkValidity()
     {
-        $o  =   array();
-        
-        foreach($this->attributes as $attr)
-        {
-            if (method_exists('\\diform\\validator', $attr))
-            {
-                $o[$attr]   =   !\diform\validator::$attr($this);
-            }
-        }
-        
-        return array_filter($o) ?: true;
+        return \diform\validator::check($this);
     }
     
 
