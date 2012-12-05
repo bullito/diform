@@ -172,8 +172,6 @@ class diform
             }
         }
         
-        $o  =   array_filter($o) ?: true;
-        flog('form check_validity', $o);
-        return $o;
+        return array_filter($o) ?: true;
     }
 }
