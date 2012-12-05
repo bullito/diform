@@ -166,7 +166,7 @@ class diform
         $o  =   array();
         foreach($this->controls as $control)
         {
-            if (($name = $control->name()))
+            if (($name = $control->name))
             {
                 flog($name);
                 $o[$name]    =   $control->checkValidity() !== true;
