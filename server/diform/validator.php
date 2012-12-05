@@ -20,12 +20,12 @@ class validator
         
         foreach(static::$rules as $rule => $func)
         {
-            $o[$rule]  =   ($valid = $func($control)) === true ? false : $valid;
+            $o[$rule]  =   !$func($control);
         }
         
         foreach($control->rules() as $rule => $func)
         {
-            $o['custom-'.$rule]  =   ($valid = $func($control)) === true ? false : $valid;
+            $o['custom-'.$rule]  =  !$func($control);
         }
         
         return array_filter($o) ?: true;
