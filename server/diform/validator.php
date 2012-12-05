@@ -19,7 +19,7 @@ class validator
         $o  =   array();
         foreach(static::$rules as $rule => $func)
         {
-            $o['rule']  =   $func($control);
+            $o[$rule]  =   $func($control);
         }
         return array_filter($o) ?: true;
     }
