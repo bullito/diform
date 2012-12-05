@@ -7,7 +7,7 @@
                 <th><?= $control->label ?></th>
                 <td><? if ($control->tip) : ?><a title="<?= $control->tip ?>">?</a><? endif; ?></td>
                 <td><?= $control ?></td>
-                <td><?= $control->feedback ?></td>
+                <td class="error"><?= $control->feedback ?></td>
             </tr><? endif; ?><? endforeach; ?> 
         </table>
     </fieldset>
