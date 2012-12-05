@@ -22,6 +22,7 @@ class control
     protected $feedback;
     protected $attributes = array();
     protected $name;
+    protected $rules = array();
 
     public function __construct($form = null)
     {
@@ -207,7 +208,22 @@ class control
         return \diform\validator::check($this);
     }
     
-
+    public function rules(/* $value */)
+    {
+        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+            $this : $this->{__FUNCTION__}
+        ;
+    }
+    
+    public function rule($rule, $func)
+    {
+        assert(!empty($rule));
+        assert(is_callable($func));
+        
+        $this->rules[$rule] =   $func;
+        return $this;
+    }
+    
     public function addClass($class)
     {
         if (!is_array($this->attributes['class']))
@@ -239,14 +255,14 @@ class control
         return $this;
     }
 
-    public function form()
+    public function form(/* $value */)
     {
         return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
 
-    public function attributes()
+    public function attributes(/* $value */)
     {
         return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
             $this : $this->{__FUNCTION__}
