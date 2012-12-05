@@ -7,7 +7,7 @@ namespace diform;
  */
 class validator
 {
-    protected $rules    =   array();
+    protected static $rules    =   array();
     
     public static function rule($rule, $func)
     {
