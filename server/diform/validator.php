@@ -21,6 +21,12 @@ class validator
         {
             $o[$rule]  =   $func($control);
         }
+        
+        foreach($control->rules() as $rule => $func)
+        {
+            $o['custom-'.$rule]  =   $func($control);
+        }
+        
         return array_filter($o) ?: true;
     }
 }
