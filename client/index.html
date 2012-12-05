@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="js/jquery/1.7.1/min.js"></script>
+        <script type="text/javascript" src="js/jquery/diform/0.1/src.js"></script>
+    </head>
+    <body>
+        <div>
+            <form>
+                <input name="test" required="" type="number" maxlength="5"/>
+            </form>
+        </div>
+        <script>
+            $('form')
+            .diform({ee: 7})
+            .diform('addType', {
+                type: 'number',
+                    check: function(i_input) {
+                        if (/^\d*(\.\d*)?$/.test(i_input.value))
+                        {
+                            return true;
+                        }
+                    }
+                });
+                
+            console.log($('form').diform());
+        </script>
+    </body>
+</html>
