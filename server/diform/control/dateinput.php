@@ -63,4 +63,15 @@ class dateinput extends \diform\control
             $format
         ).'$';
     }
+    
+    public function populate()
+    {
+        $this->val();
+        if (isset($this->val))
+        {
+            $this->attributes['value'] = date(static::$format, $this->val);
+        }
+
+        return $this;
+    }
 }
