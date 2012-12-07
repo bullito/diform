@@ -14,8 +14,19 @@ class validator
         static::$rules[$rule]   =   $func;
     }
     
+    public static function is_disabled($control)
+    {
+        return isset($control->attributes['disabled']) &&
+        $control->attributes['disabled'];
+    }
+
     public static function check($control)
     {
+        if (static::is_disabled($control))
+        {
+            return true;
+        }
+        
         $o  =   array();
         
         foreach(static::$rules as $rule => $func)
@@ -27,7 +38,7 @@ class validator
         {
             $o['custom-'.$rule]  =  !$func($control);
         }
-        
+
         return array_filter($o) ?: true;
     }
 }
@@ -60,6 +71,7 @@ validator::rule('pattern', function($control) {
         !isset($control->attributes['pattern']) 
     or 
         preg_match('~'.$control->attributes['pattern'].'~', $control->val())
+        || !$control->feedback(('mal formaté'))
     ;
 });
 
@@ -69,6 +81,7 @@ validator::rule('min-length', function($control) {
         !isset($control->attributes['min-length']) 
     or 
         strlen($control->val()) >= $control->attributes['min-length']
+        || !$control->feedback('minimum ' . $control->attributes['min-length'] . ' caractères')
     ;
 });
 
@@ -78,5 +91,7 @@ validator::rule('max-length', function($control) {
         !isset($control->attributes['max-length'])
     or
         strlen($control->val()) <= $control->attributes['max-length']
+        || !$control->feedback('maximum ' . $control->attributes['max-length'] . ' caractères')
+    
     ;
 });
