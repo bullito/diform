@@ -269,4 +269,10 @@ class control
         ;
     }
 
+    public function feedback(/* $value */)
+    {
+        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+            $this : $this->{__FUNCTION__}
+        ;
+    }
 }
