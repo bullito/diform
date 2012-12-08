@@ -71,17 +71,17 @@ validator::rule('pattern', function($control) {
         !isset($control->attributes['pattern']) 
     or 
         preg_match('~'.$control->attributes['pattern'].'~', $control->val())
-        || !$control->feedback(('mal formaté'))
+        || !$control->invalidate(('mal formaté'))
     ;
 });
 
-validator::rule('min-length', function($control) {
+validator::rule('pattern', function($control) {
     
     return 
-        !isset($control->attributes['min-length']) 
+        !isset($control->attributes['pattern']) 
     or 
-        strlen($control->val()) >= $control->attributes['min-length']
-        || !$control->feedback('minimum ' . $control->attributes['min-length'] . ' caractères')
+        preg_match('~'.$control->attributes['pattern'].'~', $control->val())
+        || !$control->invalidate(('mal formaté'))
     ;
 });
 
@@ -91,7 +91,7 @@ validator::rule('max-length', function($control) {
         !isset($control->attributes['max-length'])
     or
         strlen($control->val()) <= $control->attributes['max-length']
-        || !$control->feedback('maximum ' . $control->attributes['max-length'] . ' caractères')
+        || !$control->invalidate('maximum ' . $control->attributes['max-length'] . ' caractères')
     
     ;
 });

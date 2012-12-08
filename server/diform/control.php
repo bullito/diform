@@ -275,4 +275,11 @@ class control
             $this : $this->{__FUNCTION__}
         ;
     }
+    
+    public function invalidate($feedback = '')
+    {
+        $this->addClass('invalid');
+        $this->feedback($feedback);
+        return $this;
+    }
 }
