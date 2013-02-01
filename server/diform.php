@@ -4,6 +4,7 @@
  * Description of diform
  *
  * @author ble
+ * @method \diform\control\text text(string $name, mixed $value) add a textfield to form
  */
 class diform
 {
