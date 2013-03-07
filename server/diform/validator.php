@@ -20,7 +20,7 @@ class validator
         assert(is_callable($check));
         assert(isset($feedback) || is_array($feedback));
 
-        static::$rules[$matcher] = compact('name', 'check', 'feedback');
+        static::$rules[$matcher] = compact('matcher', 'check', 'feedback');
     }
 
     public static function is_disabled($control)
@@ -31,31 +31,32 @@ class validator
 
     public static function rules4Attribute($attribute)
     {
-        return isset(static::$rules["[$attributes]"]) ?
-            static::$rules["[$attributes]"] : false
+        return isset(static::$rules["[$attribute]"]) ?
+            static::$rules["[$attribute]"] : false
         ;
     }
 
-    public static function check($control)
+    /**
+     * 
+     * @param control $control
+     * @return boolean|string
+     */
+    public static function checkValidity($control)
     {
         if (static::is_disabled($control))
             return true;
 
-        $o = array();
-
         foreach ($control->rules() as $matcher => $rule)
         {
-            ($rule === true) and ($rule = self::$rules[$matcher]);
+            if ($rule === true)
+                $rule = self::$rules[$matcher];
 
             if (is_array($rule) && is_callable($rule['check']))
-            {
-                ($rule['check']($control)) or 
-                    ($o[] = static::feedback4ControlAndRule($control, $rule))
-                ;
-            }
+                if (!$rule['check']($control))
+                    return static::feedback4ControlAndRule($control, $rule);
         }
 
-        return array_filter($o) ? : true;
+        return true;
     }
 
     public static function feedback4ControlAndRule($control, $rule)
@@ -108,8 +109,8 @@ class validator
 
 validator::rule('[required]', function($control)
     {
-
-        return isset($control->val()) && !empty($control->val());
+        $val    =   $control->val();
+        return isset($val) && !empty($val);
     }, array(
     'en' => 'required',
     'fr' => 'manquant'
