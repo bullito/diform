@@ -5,6 +5,7 @@
  *
  * @author ble
  * @method \diform\control\text text(string $name, mixed $value) add a textfield to form
+ * @method \diform\control\textarea textarea(string $name, mixed $value) add a textarea to form
  */
 class diform
 {
@@ -70,11 +71,11 @@ class diform
     }
 
     /**
-     * 
-     * @param type $control
-     * @param type $name
-     * @param type $val
-     * @return \class
+     * Equivalent to the add method
+     * @param string $control
+     * @param string $name
+     * @param mixed $val
+     * @return \diform\control
      */
     public function __invoke($name, $control = 'text', $value = null)
     {
@@ -128,21 +129,32 @@ class diform
         return $this;
     }
     
+    /**
+     * 
+     * @param string $name
+     * @return \diform\control|boolean
+     */
     public function __get($name)
     {
-        if (isset($this->controls[$name]))
-        {
-            return $this->controls[$name];
-        }
-        
-        return false;
+        return isset($this->controls[$name]) ?
+            $this->controls[$name] : false
+        ;
     }
-
+    
+    /**
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return $this->render(true);
     }
     
+    /**
+     * 
+     * @param boolean $return
+     * @return string|diform
+     */
     public function render($return = false) {
         $this->prepare();
         $return && ob_start();
@@ -151,9 +163,17 @@ class diform
         return $return ? ob_get_clean() : $this;
     }
     
-    public function data($name)
+    /**
+     * 
+     * @param array|\Traversable $data
+     * @return diform\data
+     */
+    public function data($data = null)
     {
-        return '';
+        return $data ? 
+            $this->data->extend($data) : 
+            $this->data
+        ;
     }
     
     public function prepare()
@@ -161,22 +181,42 @@ class diform
         return $this;
     }
     
+    /**
+     * check Validity of the form.
+     * Returns true or an assoc of all errors (one by control)
+     * @return boolean|array
+     */
     public function checkValidity()
     {
-        $o  =   array();
+        $errors  =   array();
         foreach($this->controls as $control)
         {
             if (($name = $control->name))
             {
-                $o[$name]   =   (($validity = $control->checkValidity()) === true) ? false : $validity;
+                if (is_string($error = $control->checkValidity()))
+                {
+                    $errors[$name]   =   $error;
+                }
             }
         }
         
-        return array_filter($o) ?: true;
+        return $errors ?: true;
+    }
+    
+    public function lang(/* $value */)
+    {
+        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+            $this : $this->{__FUNCTION__}
+        ;
     }
 }
 
-
+/**
+ * 
+ * @param array $config
+ * @param array $data
+ * @return \diform
+ */
 function diform($config = null, $data = null)
 {
     return new diform($config, $data);
