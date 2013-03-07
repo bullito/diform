@@ -12,34 +12,89 @@ namespace diform;
  */
 class control
 {
-
+    /**
+     *
+     * @var \diform 
+     */
     protected $form;
+    
+    /**
+     *
+     * @var string 
+     */
     protected $tag = 'input';
+    
+    /**
+     *
+     * @var string 
+     */
     protected $content;
+    
+    /**
+     *
+     * @var mixed 
+     */
     protected $val;
+    
+    /**
+     *
+     * @var string 
+     */
     protected $label;
+    
+    /**
+     *
+     * @var string 
+     */
     protected $tip;
+    
+    /**
+     *
+     * @var string 
+     */
     protected $feedback;
+    
+    /**
+     *
+     * @var assoc 
+     */
     protected $attributes = array();
+    
+    /**
+     *
+     * @var string 
+     */
     protected $name;
+    
+    /**
+     *
+     * @var array 
+     */
     protected $rules = array();
 
+    /**
+     * 
+     * @param \diform $form
+     */
     public function __construct($form = null)
     {
         $this->form = $form;
     }
 
+    /**
+     * Return method result or attribute
+     * @param string $name
+     * @return mixed
+     */
     public function __get($name)
     {
-        if (method_exists($this, $name))
-        {
-            return $this->$name();
-        }
-        else
-        {
-            return isset($this->attributes[$name]) ?
-                $this->attributes[$name] : null;
-        }
+        return method_exists($this, $name) ? 
+            $this->$name() : 
+            (isset($this->attributes[$name]) ?
+                $this->attributes[$name] : 
+                null
+            )
+        ;
     }
 
     public function __call($name, $args)
@@ -48,17 +103,17 @@ class control
 
         if (!count($args))
         {
-            $this->attributes[$name] = true;
+            $this->attr($name, true);
         }
         else if ($name == 'class')
         {
-            $this->attributes[$name] = array_filter(array_unique(
-                    explode(' ', $args[0])
-                ));
+            $this->attr($name, array_filter(array_unique(
+                explode(' ', $args[0])
+            )));
         }
         else
         {
-            $this->attributes[$name] = $args[0];
+            $this->attr($name, $args[0]);
         }
 
         return $this;
@@ -110,6 +165,7 @@ class control
     public function attrs()
     {
         $this->populate();
+        $this->checkValidity();
         return $this->attrs = \diform::attrs($this->attributes);
     }
 
@@ -208,13 +264,35 @@ class control
 
     public function __toString()
     {
-        $this->render();
-        return '';
+        return $this->render(true);
     }
 
     public function checkValidity()
     {
-        return \diform\validator::check($this);
+        if ($this->form && get_object_vars($this->form->data))
+        {
+            $check  =   validator::checkValidity($this);
+        
+            if ($check !== true)
+            {
+                $this->invalidate($check);
+            }
+            
+            return $check;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 
+     * @param type $error
+     * @return \diform\control
+     */
+    public function error($error)
+    {
+        $this->feedback("<span class=\"error\">$error</span>");
+        return $this;
     }
     
     public function rules(/* $value */)
@@ -235,7 +313,11 @@ class control
     
     public function addClass($class)
     {
-        if (!is_array($this->attributes['class']))
+        if (!isset($this->attributes['class']))
+        {
+            $this->attributes['class'][] = $class;
+        }
+        if (is_string($this->attributes['class']))
         {
             $this->attributes['class'] = (array) $this->attributes['class'];
         }
@@ -285,10 +367,10 @@ class control
         ;
     }
     
-    public function invalidate($feedback = '')
+    public function invalidate($error = '')
     {
         $this->addClass('invalid');
-        $this->feedback($feedback);
+        $this->error($error);
         return $this;
     }
 }
