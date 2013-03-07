@@ -269,7 +269,7 @@ class control
 
     public function checkValidity()
     {
-        if ($this->form && get_object_vars($this->form->data))
+        if ($this->form && $this->form->data->isPopulated())
         {
             $check  =   validator::checkValidity($this);
         
