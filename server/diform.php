@@ -9,7 +9,6 @@
 class diform
 {
     /** @var string  */
-
     const PATH = __DIR__;
     
     /**
@@ -175,4 +174,10 @@ class diform
         
         return array_filter($o) ?: true;
     }
+}
+
+
+function diform($config = null, $data = null)
+{
+    return new diform($config, $data);
 }

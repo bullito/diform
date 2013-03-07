@@ -70,7 +70,7 @@ class config {
             is_string($name) && $props['name'] = $name;
             if ($props['name'])
             {
-                $class = '\\diform\\input\\' . ($props['type'] ?: 'string');
+                $class = '\\diform\\control\\' . (isset($props['type']) ? $props['type'] : 'text');
                 $this->inputs->$name = new $class($props);
             }
         }

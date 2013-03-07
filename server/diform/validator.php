@@ -10,19 +10,26 @@ class validator
     protected static $rules    =   array();
     protected static $feedback_default;
 
-    public static function rule($name, $check, $feedback = null)
+    public static function rule($matcher, $check, $feedback = null)
     {
-        assert(is_string($name));
+        assert(is_string($matcher));
         assert(is_callable($check));
         assert(isset($feedback) || is_array($feedback));
         
-        static::$rules[$name]   =   compact('name', 'check', 'feedback');        
+        static::$rules[$matcher]   =   compact('name', 'check', 'feedback');        
     }
     
     public static function is_disabled($control)
     {
         return isset($control->attributes['disabled']) &&
         $control->attributes['disabled'];
+    }
+
+    public static function rules4Attribute($attribute)
+    {
+        return isset(static::$rules["[$attributes]"]) ?
+            static::$rules["[$attributes]"] : false
+        ;
     }
 
     public static function check($control)
@@ -48,66 +55,42 @@ class validator
     }
 }
 
-validator::rule('required', function($control) {
+validator::rule('[required]', function($control) {
     
-    if (!isset($control->attributes['required']))
-    {
-        return true;
-    }
-    
-    $val    =   $control->val();
-    
-    if (!isset($val))
-    {
-        return false;
-    }
-    
-    if (empty($val))
-    {
-        return false;
-    }
-    
-    return true;
+    return isset($control->val()) && !empty($control->val());
 }, array(
     'en' => 'required',
     'fr' => 'manquant'
 ));
 
-validator::rule('pattern', function($control) {
+validator::rule('[pattern]', function($control) {
     
-    if (!isset($control->attributes['pattern']))
-    {
-        return true;
-    }
-    
-    return preg_match('~'.$control->attributes['pattern'].'~', $control->val());
+  return preg_match('~'.$control->attributes['pattern'].'~', $control->val());
 }, array(
     'en'    =>  'wrong format',
     'fr'    =>  'mal formaté'
 ));
 
-validator::rule('maxlength', function($control) {
-    
-    return 
-        !isset($control->attributes['maxlength'])
-    or
-        strlen($control->val()) <= $control->attributes['maxlength']
-        || !$control->invalidate('maximum ' . $control->attributes['maxlength'] . ' caractères')
-    
-    ;
-});
 
-validator::rule('minlength', function($control) {
-    echo 'minliength';
-     if (!isset($control->attributes['minlength']))
-     {
-         return true;
-    }
-     
+validator::rule('[minlength]', function($control) {
+
     $minlength =   parseInt($control->attributes['minlength']);
     $length    =   strlen($control->val());
     
-    return (! $length || $length >= $minlength);
-});
+    return ($length === 0 || $length >= $minlength);
+},
+ array(
+    'en' => 'too short',
+    'fr' => 'trop court'
+));
 
-//validator::rule('data-at-', $check, $feedback)
+validator::rule('[maxlength]', function($control) {
+    
+    $maxlength =   parseInt($control->attributes['minlength']);
+    $length    =   strlen($control->val());
+    
+    return ($length === 0 || $length >= $maxlength);
+}, array(
+    'en' => 'too long',
+    'fr' => 'trop long'
+));

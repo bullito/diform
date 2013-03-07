@@ -82,6 +82,15 @@ class control
                 break;
             }
             
+            if ($value === false)
+            {
+                unset($this->rules["[$name]"]);
+            }
+            else if (($rule = validator::rules4Attribute($name)))
+            {
+                $this->rules[$rule['matcher']]  =   true;
+            }
+            
             return $this;
         }
         else
@@ -215,7 +224,7 @@ class control
         ;
     }
     
-    public function rule($rule, $func)
+    public function rule($rule, $func, $feedback = array('en' => 'invalid'))
     {
         assert(!empty($rule));
         assert(is_callable($func));
