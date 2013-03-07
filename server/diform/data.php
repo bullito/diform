@@ -8,15 +8,29 @@ namespace diform;
  */
 class data {
     
+    /**
+     *
+     * @var \diform 
+     */
+    protected $_diform;
     
-    public function __construct($data = array()) {
+    /**
+     *
+     * @var boolean 
+     */
+    protected $_isPopulated = false;
+    
+    public function __construct(\diform $diform = null, $data = array()) {
         
+        $this->_diform  = $diform;
         $this->extend($data);
     }
     
     public function extend($data, $prefix = '')
     {
         $data   =   (array)json_decode(json_encode($data));
+        
+        $this->_isPopulated =  $this->_isPopulated || !!$data;
         
         foreach($data as $key => $value)
         {
@@ -33,6 +47,11 @@ class data {
         }
         
         return $this;
+    }
+    
+    public function isPopulated()
+    {
+        return $this->_isPopulated;
     }
 }
 
