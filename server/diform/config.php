@@ -1,31 +1,33 @@
 <?php
+
 namespace diform;
+
 /**
  * Description of config
  *
  * @author ble
  */
-class config {
-    
+class config
+{
+
     public static $defaults = array(
-        'template'  =>  '%/diform/template/table.php',
-        'form'      =>  array(
-            /*'action' => '',*/
+        'template' => '%/diform/template/table.php',
+        'form' => array(
+            /* 'action' => '', */
             'method' => 'post',
         ),
-        /*'legend' => '',*/
+        /* 'legend' => '', */
         'tip' => '?',
     );
-    
     protected $template;
-    
-    public $form; 
-    public $inputs;
-    
-    public function __construct($config = array()) {
-        
-        $this->form     =   (object) self::$defaults['form'];
-        $this->inputs   =   new \stdClass;
+    public $form;
+    public $controls;
+
+    public function __construct($config = array())
+    {
+
+        $this->form     = (object) self::$defaults['form'];
+        $this->controls = new \stdClass;
         /**
          * 
          */
@@ -33,16 +35,21 @@ class config {
         {
             $this->extend($config);
         }
-        
+
         $this->template || $this->template(self::$defaults['template']);
     }
-    
+
+    /**
+     * 
+     * @param array|\Traversable $config
+     * @return \diform\config
+     */
     public function extend($config)
     {
-        foreach($config as $prop => $value)
+        foreach ($config as $prop => $value)
         {
             if (method_exists($this, $prop))
-            {               
+            {
                 $this->$prop($value);
             }
             else
@@ -50,40 +57,49 @@ class config {
                 $this->$prop = $value;
             }
         }
-        
+
         return $this;
     }
-    
+
+    /**
+     * 
+     * @param array|\Traversable $form
+     * @return \diform\config
+     */
     public function form($form)
     {
-        foreach($form as $key => $value)
+        foreach ($form as $key => $value)
         {
             $this->form->$key = $value;
         }
         return $this;
     }
+
     
-    public function inputs($inputs)
+    public function controls($controls)
     {
-        foreach($inputs as $name => $props)
+        foreach ($controls as $name => $props)
         {
-            is_string($name) && $props['name'] = $name;
+            if (is_string($name))
+                $props['name'] = $name;
+            
             if ($props['name'])
             {
-                $class = '\\diform\\control\\' . (isset($props['type']) ? $props['type'] : 'text');
-                $this->inputs->$name = new $class($props);
+                $class                 = '\\diform\\control\\' . (isset($props['type']) ? $props['type'] : 'text');
+                $this->controls->$name = new $class($props);
             }
         }
     }
-    
+
     public function template($template = null)
     {
         if ($template)
         {
             $this->template = ($template{0} == '%') ?
-                \diform::PATH . substr($template, 1) : $template
+                \diform::PATH . substr($template, 1) : 
+                $template
             ;
-            
+
             return $this;
         }
         else
@@ -91,4 +107,5 @@ class config {
             return $this->template;
         }
     }
+
 }
