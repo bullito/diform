@@ -19,24 +19,22 @@ class config
         /* 'legend' => '', */
         'tip' => '?',
     );
-    protected $template;
-    public $form;
-    public $controls;
+    protected $_template;
+    protected $_diform;
+    public $form = array();
+    public $controls = array();
 
-    public function __construct($config = array())
+    public function __construct(\diform $diform = null, $extend = array())
     {
-
-        $this->form     = (object) self::$defaults['form'];
+        $this->_diform  = $diform;
+        $this->form     = static::$defaults['form'];
         $this->controls = new \stdClass;
         /**
          * 
          */
-        if (is_object($config) || is_array($config))
-        {
-            $this->extend($config);
-        }
-
-        $this->template || $this->template(self::$defaults['template']);
+        $this->extend($extend);
+        
+        $this->_template || $this->template(self::$defaults['template']);
     }
 
     /**
@@ -68,35 +66,42 @@ class config
      */
     public function form($form)
     {
-        foreach ($form as $key => $value)
-        {
-            $this->form->$key = $value;
-        }
+        $this->form = array_replace_recursive($this->form, (array) $form);
         return $this;
     }
 
-    
     public function controls($controls)
     {
         foreach ($controls as $name => $props)
         {
             if (is_string($name))
                 $props['name'] = $name;
+
+            $type = isset($props['type']) ? $props['type'] : 'text';
+            unset($props['type']);
+
+            $class = '\\diform\\control\\' . $type;
+
+            $control = new $class($this->_diform);
             
-            if ($props['name'])
-            {
-                $class                 = '\\diform\\control\\' . (isset($props['type']) ? $props['type'] : 'text');
-                $this->controls->$name = new $class($props);
-            }
+            foreach ($props as $prop => $value)
+                $control->$prop($value);
+
+            $this->controls->{$props['name']} = $props;
+
+            if ($this->_diform)
+                $this->_diform->add($control);
         }
+
+        return $this;
     }
 
     public function template($template = null)
     {
         if ($template)
         {
-            $this->template = ($template{0} == '%') ?
-                \diform::PATH . substr($template, 1) : 
+            $this->_template = ($template{0} == '%') ?
+                \diform::PATH . substr($template, 1) :
                 $template
             ;
 
@@ -104,7 +109,7 @@ class config
         }
         else
         {
-            return $this->template;
+            return $this->_template;
         }
     }
 
