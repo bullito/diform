@@ -10,15 +10,40 @@
 class diform
 {
     /** @var string  */
+
     const PATH = __DIR__;
-    
+
     /**
      *
      * @var array|of|\diform\control 
      */
-    protected $controls = array();
+    protected $controls     = array();
+    
+    /**
+     *
+     * @var array|of|callable 
+     */
+    protected $beforeRender = array();
+    
+    /**
+     *
+     * @var \diform\config 
+     */
+    public $config;
+    
+    /**
+     *
+     * @var \diform\data 
+     */
     public $data;
     
+    /**
+     * tag attributes
+     * @var assoc 
+     */
+    public $attributes = array();
+
+
     public static function lazyLoad($boo = true)
     {
         if ($boo)
@@ -53,7 +78,7 @@ class diform
             }
             else if (is_array($value))
             {
-                $arr[] = $key.'="'.implode(' ', $value) . '"';
+                $arr[] = $key . '="' . implode(' ', $value) . '"';
             }
             else
             {
@@ -65,9 +90,9 @@ class diform
 
     public function __construct($config = null, $data = null)
     {
-        
-        $this->config   =   new \diform\config($config);
-        $this->data     =   new \diform\data($data);
+
+        $this->config = new \diform\config($this, $config);
+        $this->data   = new \diform\data($this, $data);
     }
 
     /**
@@ -79,7 +104,7 @@ class diform
      */
     public function __invoke($name, $control = 'text', $value = null)
     {
-        $class = '\\diform\\control\\' . $control;
+        $class   = '\\diform\\control\\' . $control;
         $element = new $class($this);
         $element
             ->attr('name', $name)
@@ -93,9 +118,9 @@ class diform
 
     public function __call($control, $args)
     {
-        $class = '\\diform\\control\\' . $control;
+        $class   = '\\diform\\control\\' . $control;
         $element = new $class($this);
-        
+
         if (isset($args[0]))
         {
             $element->attr('name', $args[0]);
@@ -105,13 +130,13 @@ class diform
             $element->value($args[1]);
         }
         $this->add($element);
-        
+
         return $element;
     }
-    
+
     public function add($control)
     {
-        $name   =   $control->attr('name');
+        $name = $control->attr('name');
         //$this->controls[] = $control;
         if (!isset($name))
         {
@@ -119,16 +144,16 @@ class diform
         }
         else if (preg_match('/^(.+)\[\]$/', $name, $matches))
         {
-            $this->controls[$matches[1]][]  =   $control;
+            $this->controls[$matches[1]][] = $control;
         }
         else
         {
-            $this->controls[$name]  =   $control;
+            $this->controls[$name] = $control;
         }
         
         return $this;
     }
-    
+
     /**
      * 
      * @param string $name
@@ -140,27 +165,17 @@ class diform
             $this->controls[$name] : false
         ;
     }
-    
+
     /**
      * 
-     * @return string
+     * @param array|\Traversable $config
+     * @return \diform\config
      */
-    public function __toString()
+    public function config(/* $config */)
     {
-        return $this->render(true);
-    }
-    
-    /**
-     * 
-     * @param boolean $return
-     * @return string|diform
-     */
-    public function render($return = false) {
-        $this->prepare();
-        $return && ob_start();
-        extract((array) $this->config);
-        include $this->config->template();
-        return $return ? ob_get_clean() : $this;
+        return (func_num_args() && ($this->{__FUNCTION__}->extend(func_get_arg(0)))) ?
+            $this : $this->{__FUNCTION__}
+        ;
     }
     
     /**
@@ -168,19 +183,13 @@ class diform
      * @param array|\Traversable $data
      * @return diform\data
      */
-    public function data($data = null)
+    public function data(/* $data */)
     {
-        return $data ? 
-            $this->data->extend($data) : 
-            $this->data
+        return (func_num_args() && ($this->{__FUNCTION__}->extend(func_get_arg(0)))) ?
+            $this : $this->{__FUNCTION__}
         ;
     }
-    
-    public function prepare()
-    {
-        return $this;
-    }
-    
+
     /**
      * check Validity of the form.
      * Returns true or an assoc of all errors (one by control)
@@ -188,26 +197,62 @@ class diform
      */
     public function checkValidity()
     {
-        $errors  =   array();
-        foreach($this->controls as $control)
+        $errors = array();
+        foreach ($this->controls as $control)
         {
             if (($name = $control->name))
             {
                 if (is_string($error = $control->checkValidity()))
                 {
-                    $errors[$name]   =   $error;
+                    $errors[$name] = $error;
                 }
             }
         }
-        
-        return $errors ?: true;
+
+        return $errors ? : true;
     }
-    
+
     public function lang(/* $value */)
     {
         return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
+    }
+
+    /**
+     * 
+     * @param callable $func
+     * @return \diform
+     */
+    public function beforeRender(callable $func)
+    {
+        $this->beforeRender[]   =   $func;
+        return $this;
+    }
+    
+    /**
+     * 
+     * @param boolean $return
+     * @return string|diform
+     */
+    public function render($return = false)
+    {
+        foreach ($this->beforeRender as $func)
+            $func($this);
+
+        $return && ob_start();
+        extract((array) $this->config);
+        include $this->config->template();
+        return $return ? ob_get_clean() : $this;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render(true);
     }
 }
 
