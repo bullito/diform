@@ -79,6 +79,23 @@ class control
     public function __construct($form = null)
     {
         $this->form = $form;
+        $this->syncValidatorRules();
+    }
+    
+    /**
+     * 
+     * @return \diform\control
+     */
+    public function syncValidatorRules()
+    {
+        foreach($this->attributes as $attribute => $value)
+        {
+            if (($rule = validator::rules4Attribute($attribute)))
+            {
+                $this->rules[$rule['matcher']]  =   true;
+            }
+        }
+        return $this;
     }
 
     /**
