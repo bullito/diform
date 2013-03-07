@@ -122,7 +122,7 @@ validator::rule('[pattern]', function($control)
         return preg_match('~' . $control->attributes['pattern'] . '~', $control->val());
     }, array(
     'en' => 'wrong format',
-    'fr' => 'mal formaté'
+    'fr' => 'mal format&eacute;'
 ));
 
 
