@@ -54,7 +54,6 @@ class validator
                 ($rule['check']($control)) or 
                     ($o[] = static::feedback4ControlAndRule($control, $rule))
                 ;
-                
             }
         }
 
