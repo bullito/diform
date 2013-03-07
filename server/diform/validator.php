@@ -39,9 +39,7 @@ class validator
     public static function check($control)
     {
         if (static::is_disabled($control))
-        {
             return true;
-        }
 
         $o = array();
 
