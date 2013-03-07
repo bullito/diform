@@ -285,8 +285,8 @@ class control
     }
     
     /**
-     * 
-     * @param type $error
+     * @todo externalize error template
+     * @param string $error
      * @return \diform\control
      */
     public function error($error)
