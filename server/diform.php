@@ -17,26 +17,26 @@ class diform
      *
      * @var array|of|\diform\control 
      */
-    protected $controls     = array();
-    
-    /**
-     *
-     * @var array|of|callable 
-     */
-    protected $beforeRender = array();
-    
+    protected $controls = array();
+
     /**
      *
      * @var \diform\config 
      */
     public $config;
-    
+
     /**
      *
      * @var \diform\data 
      */
     public $data;
-    
+
+    /**
+     *
+     * @var \diform\events
+     */
+    public $events;
+
     /**
      * tag attributes
      * @var assoc 
@@ -44,16 +44,18 @@ class diform
     public $attributes = array();
 
 
+    /**
+     * Activate/deactivate lazyloading for diform.
+     * Lazy Load is not auto-enabled because of possible redundancy
+     * with other strategies when integrating in a framework / project.
+     * @param bool $boo
+     */
     public static function lazyLoad($boo = true)
     {
         if ($boo)
-        {
             spl_autoload_register(array(__CLASS__, 'loadClass'));
-        }
         else
-        {
             spl_autoload_unregister(array(__CLASS__, 'loadClass'));
-        }
     }
 
     public static function loadClass($class)
@@ -63,36 +65,45 @@ class diform
             include $path;
     }
 
+    /**
+     * returns html attributes for a vector
+     * 
+     * @param array|Traversable $vector
+     * @return string
+     */
     public static function attrs($vector)
     {
         $arr = array();
+        
         foreach ($vector as $key => $value)
         {
-            if (!isset($value) || $value === FALSE)
-            {
+            if (!isset($value) || $value === false)
                 continue;
-            }
-            else if ($value === TRUE)
-            {
+            else if ($value === true)
                 $arr[] = "$key=\"$key\"";
-            }
             else if (is_array($value))
-            {
                 $arr[] = $key . '="' . implode(' ', $value) . '"';
-            }
             else
-            {
                 $arr[] = "$key=\"$value\"";
-            }
         }
         return implode(' ', $arr);
     }
 
-    public function __construct($config = null, $data = null)
+    /**
+     * 
+     * @param type $config
+     * @param type $data
+     * @param type $events
+     */
+    public function __construct($config = null, $data = null, $events = null)
     {
-
-        $this->config = new \diform\config($this, $config);
-        $this->data   = new \diform\data($this, $data);
+        foreach(array('config', 'data', 'events') as $prop)
+        {
+            $class  =   '\\diform\\'.$prop;
+            $this->$prop = new $class($this, self::$defaults[$prop]);
+            if (isset($$prop))
+                $this->$prop->extend($$prop);
+        }
     }
 
     /**
@@ -150,7 +161,7 @@ class diform
         {
             $this->controls[$name] = $control;
         }
-        
+
         return $this;
     }
 
@@ -177,7 +188,7 @@ class diform
             $this : $this->{__FUNCTION__}
         ;
     }
-    
+
     /**
      * 
      * @param array|\Traversable $data
@@ -221,24 +232,12 @@ class diform
 
     /**
      * 
-     * @param callable $func
-     * @return \diform
-     */
-    public function beforeRender(callable $func)
-    {
-        $this->beforeRender[]   =   $func;
-        return $this;
-    }
-    
-    /**
-     * 
      * @param boolean $return
      * @return string|diform
      */
     public function render($return = false)
     {
-        foreach ($this->beforeRender as $func)
-            $func($this);
+        $this->events->trigger('on_render_form', $this);
 
         $return && ob_start();
         extract((array) $this->config);
@@ -254,6 +253,7 @@ class diform
     {
         return $this->render(true);
     }
+
 }
 
 /**
@@ -262,7 +262,7 @@ class diform
  * @param array $data
  * @return \diform
  */
-function diform($config = null, $data = null)
+function diform($config = null, $data = null, $events = null)
 {
-    return new diform($config, $data);
+    return new diform($config, $data, $events);
 }
