@@ -9,16 +9,19 @@ namespace diform;
  */
 class validator
 {
-
+    public static $defaults =   array(
+        'feedback' => array(
+            'en' => 'invalid'
+        )
+    );
+    
     protected static $rules = array();
-    protected static $feedback_default;
     protected static $lang = 'en';
 
-    public static function rule($matcher, $check, $feedback = null)
+    public static function rule($matcher, callable $check, $feedback = null)
     {
         assert(is_string($matcher));
         assert(is_callable($check));
-        assert(isset($feedback) || is_array($feedback));
 
         static::$rules[$matcher] = compact('matcher', 'check', 'feedback');
     }
@@ -62,9 +65,7 @@ class validator
     public static function feedback4ControlAndRule($control, $rule)
     {
         if (($feedback = $control->attr('data-message')))
-        {
             return $feedback;
-        }
         
         if (isset($rule['feedback']))
         {
@@ -73,13 +74,9 @@ class validator
                 $lang   =   static::lang4Control($control);
                 
                 if (isset($rule['feedback'][$lang]))
-                {
                     return $rule['feedback'][$lang];
-                }
                 else if (($feedback = array_shift($rule['feedback'])))
-                {
                     return $feedback;
-                }
             }
             else if (is_string($rule['feedback']))
             {
@@ -87,20 +84,16 @@ class validator
             }
         }
         
-        return self::$feedback_default ?: 'invalid';
+        return static::$defaults['feedback'] ?: 'invalid';
     }
     
     public static function lang4Control($control)
     {
         if (isset($control->lang))
-        {
             return $control->lang;
-        }
         
         if (isset($control->form->lang))
-        {
             return $control->form->lang;
-        }
         
         return self::$lang;
     }

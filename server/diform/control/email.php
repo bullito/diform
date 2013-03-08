@@ -9,6 +9,6 @@ class email extends \diform\control
 {
     public $attributes = array(
         'type' => 'email',
-        'pattern' => '^[a-zA-Z0-9_]+(([._-]?[a-zA-Z0-9]+)*)@(([a-zA-Z0-9]+[.-]?)+)([a-zA-Z0-9]+)\.(([a-zA-Z]{2})|biz|net|com|gov|mil|org|edu|int|info)$'
+        'pattern' => '^[a-zA-Z0-9_]+(([._-]?[a-zA-Z0-9]+)*)@(([a-zA-Z0-9]+[.-]?)*)([a-zA-Z0-9]+)\.(([a-zA-Z]{2})|biz|net|com|gov|mil|org|edu|int|info)$'
     );
 }

@@ -9,7 +9,6 @@ namespace diform;
  */
 class config
 {
-
     public static $defaults = array(
         'template' => '%/diform/template/table.php',
         'form' => array(
@@ -18,22 +17,24 @@ class config
         ),
         /* 'legend' => '', */
         'tip' => '?',
+        'error_decorator' => '<span class="error">{$error}</span>'
     );
+    
     protected $_template;
     protected $_diform;
-    public $form = array();
+    
+    public $form     = array();
     public $controls = array();
+    public $error_decorator;
 
-    public function __construct(\diform $diform = null, $extend = array())
+    public function __construct(\diform $diform = null, $extend = null)
     {
         $this->_diform  = $diform;
-        $this->form     = static::$defaults['form'];
         $this->controls = new \stdClass;
-        /**
-         * 
-         */
+
+        $this->extend(static::$defaults);
         $this->extend($extend);
-        
+
         $this->_template || $this->template(self::$defaults['template']);
     }
 
@@ -44,18 +45,27 @@ class config
      */
     public function extend($config)
     {
-        foreach ($config as $prop => $value)
+        if (isset($config))
         {
-            if (method_exists($this, $prop))
+            foreach ($config as $prop => $value)
             {
-                $this->$prop($value);
-            }
-            else
-            {
-                $this->$prop = $value;
+                if (method_exists($this, $prop))
+                {
+                    $this->$prop($value);
+                }
+                else
+                {
+                    $this->$prop = $value;
+                }
             }
         }
 
+        return $this;
+    }
+
+    public function lang($lang)
+    {
+        $this->_diform->lang($lang);
         return $this;
     }
 
@@ -83,7 +93,7 @@ class config
             $class = '\\diform\\control\\' . $type;
 
             $control = new $class($this->_diform);
-            
+
             foreach ($props as $prop => $value)
                 $control->$prop($value);
 

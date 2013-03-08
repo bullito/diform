@@ -73,6 +73,11 @@ class control
     protected $rules = array();
 
     /**
+     *
+     * @var bool 
+     */
+    protected $checkValidity;
+    /**
      * 
      * @param \diform $form
      */
@@ -88,6 +93,7 @@ class control
      */
     public function syncValidatorRules()
     {
+        unset($this->checkValidity);
         foreach($this->attributes as $attribute => $value)
         {
             if (($rule = validator::rules4Attribute($attribute)))
@@ -286,6 +292,11 @@ class control
 
     public function checkValidity()
     {
+        if (isset($this->checkValidity))
+        {
+            return $this->checkValidity;
+        }
+        
         if ($this->form && $this->form->data->isPopulated())
         {
             $check  =   validator::checkValidity($this);
@@ -295,7 +306,7 @@ class control
                 $this->invalidate($check);
             }
             
-            return $check;
+            return ($this->checkValidity = $check);
         }
         
         return true;
@@ -308,7 +319,10 @@ class control
      */
     public function error($error)
     {
-        $this->feedback("<span class=\"error\">$error</span>");
+        static $error_decorator = false;
+        $error_decorator or $error_decorator = $this->form->config->error_decorator;
+        
+        $this->feedback(str_replace('{$error}', $error, $error_decorator));
         return $this;
     }
     
@@ -319,12 +333,12 @@ class control
         ;
     }
     
-    public function rule($rule, $func, $feedback = array('en' => 'invalid'))
+    public function rule($rule, $func, $feedback = null)
     {
         assert(!empty($rule));
         assert(is_callable($func));
-        
-        $this->rules[$rule] =   $func;
+        unset($this->checkValidity);
+        $this->rules[$rule] =   array($rule, $func, $feedback);
         return $this;
     }
     
@@ -386,7 +400,7 @@ class control
     
     public function invalidate($error = '')
     {
-        $this->addClass('invalid');
+        $this->form->events->trigger('invalidate_control', $this);
         $this->error($error);
         return $this;
     }
