@@ -24,7 +24,7 @@ $f = new diform(
 
 
 $f->add($i);
-$f->render();die;
+$f->render();
 $f->datetime('zkef')->label('zkef')->tip('test');
 $f->date('ehjfz')->title("test'er");
 $f->time('tehqefb');
@@ -34,7 +34,7 @@ $f->select('testselectmultiple')->multiple()->choices(array('--select--'=>'', 'a
 $f->select('testselect')->required()->choices(array('--select--'=>'', 'a'=>1, 2, 3, 'b'=>4));
 $f->checkboxes('cbs')->required()->choices(array('aa' => 'aaa', 'bb'));
 $f->submit()->val('ok');
-$f->render();die;
+$f->render();
 ?>
 <form>
     <input <?= $f('test[qsf][sdf]')->required()->attrs ?>/>

@@ -1,5 +1,6 @@
 <?php
 include dirname(__DIR__).'/server/diform.php';
+diform::lazyLoad();
 
 $config = array(
     'form' => array(
@@ -34,12 +35,12 @@ $m[] = microtime(true);
 <?=
 
 $ff = diform()
-    ->string(
+    ->text(
         'test[trux]', 
         'ceci est un label', 
         array('class' => 'ee')
     )
-    ->text(
+    ->textarea(
         'test2', 'ceci est un test', 
         array(
             'value' => 'contenu', 
