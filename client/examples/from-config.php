@@ -6,25 +6,28 @@ $form = diform(
     'lang' => 'fr',
     'form' => array(
         'name' => 'test',
-        'novalidate' => true
+        //'novalidate' => true
     ),
     'controls' => array(
         'test' => array(
             'label' => 'test',
             'type' => 'textarea',
             'placeholder' => 'type here',
+            'pattern' => '\d+',
             'required' => true,
-            'pattern' => '\d+'
         ),
         'mail' => array(
             'type' => 'email'
+        ),
+        'ee' => array(
+            'pattern' => '\d+',
         ),
         'submit' => array(
             'type' => 'submit'
         )
     )
     ), 
-    $_POST, 
+    null, 
     array(
         'on_invalidate_control' => array(
             function($control)
@@ -33,7 +36,7 @@ $form = diform(
             }
         )
     )
-);
+)->request($_POST);
 ?>
 <style type="text/css">
     .invalid {
@@ -44,7 +47,7 @@ $form = diform(
         color: red;
     }
 </style>
-
+<?= $form->data->isPopulated() ?>
 
 <?
 
