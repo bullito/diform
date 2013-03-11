@@ -100,9 +100,7 @@ class diform
         foreach(array('config', 'data', 'events') as $prop)
         {
             $class  =   '\\diform\\'.$prop;
-            $this->$prop = new $class($this, self::$defaults[$prop]);
-            if (isset($$prop))
-                $this->$prop->extend($$prop);
+            $this->$prop = new $class($this, $$prop);
         }
     }
 
@@ -237,7 +235,7 @@ class diform
      */
     public function render($return = false)
     {
-        $this->events->trigger('on_render_form', $this);
+        $this->events->trigger('render_form', $this);
 
         $return && ob_start();
         extract((array) $this->config);
@@ -254,6 +252,11 @@ class diform
         return $this->render(true);
     }
 
+    public function request($request)
+    {
+        $this->data->request($request);
+        return $this;
+    }
 }
 
 /**
