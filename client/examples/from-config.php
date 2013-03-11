@@ -6,10 +6,10 @@ $form = diform(
     'lang' => 'fr',
     'form' => array(
         'name' => 'test',
-        //'novalidate' => true
+        'novalidate' => true
     ),
     'controls' => array(
-        'test' => array(
+        'test[zz]' => array(
             'label' => 'test',
             'type' => 'textarea',
             'placeholder' => 'type here',
@@ -20,7 +20,7 @@ $form = diform(
             'type' => 'email'
         ),
         'ee' => array(
-            'pattern' => '\d+',
+            'type' => 'file',
         ),
         'submit' => array(
             'type' => 'submit'
@@ -29,7 +29,7 @@ $form = diform(
     ), 
     null, 
     array(
-        'on_invalidate_control' => array(
+        'invalidate_control' => array(
             function($control)
             {
                 $control->addClass('invalid');
@@ -39,18 +39,26 @@ $form = diform(
 )->request($_POST);
 ?>
 <style type="text/css">
-    .invalid {
-        border: 1px solid red;
-    }
-
-    .error {
-        color: red;
-    }
+    .invalid {border: 1px solid red;}
+    .error {color: red;}
 </style>
-<?= $form->data->isPopulated() ?>
 
-<?
+<?= $form ?>
 
-$form->render();
-
-var_dump($form->checkValidity());
+<script type="text/javascript" src="../js/jquery/1.7.1/min.js"></script>
+<script type="text/javascript" src="http://cdn.jquerytools.org/1.2.7/form/jquery.tools.min.js"></script>
+<script type="text/javascript">
+        $.tools.validator.messages  =   <?= json_encode(\diform\validator::feedbacks()) ?>;
+        $.tools.validator.addEffect('next-td', function(errors, event) {
+            $.each(errors, function(index, error) {
+                $(error.input).addClass('invalid').closest('td').next().html('<?= $form->config->error_decorator ?>'.replace(/\{\$error\}/g, error.messages[0]));
+            });
+        }, function(inputs) {
+            $.each(inputs, function(index, input) {
+                $(input).removeClass('invalid').closest('td').next().html('');
+            });
+        });
+</script>
+<script type="text/javascript">
+    $('form').validator({lang:'fr', effect: 'next-td'});
+</script>
