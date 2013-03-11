@@ -293,9 +293,7 @@ class control
     public function checkValidity()
     {
         if (isset($this->checkValidity))
-        {
             return $this->checkValidity;
-        }
         
         if ($this->form && $this->form->data->isPopulated())
         {
