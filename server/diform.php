@@ -106,41 +106,54 @@ class diform
 
     /**
      * Equivalent to the add method
-     * @param string $control
+     * @param string $type
      * @param string $name
      * @param mixed $val
      * @return \diform\control
      */
-    public function __invoke($name, $control = 'text', $value = null)
+    public function __invoke($name, $type = 'text', $value = null)
     {
-        $class   = '\\diform\\control\\' . $control;
-        $element = new $class($this);
-        $element
+        $control = $this->control($type);
+        $control
             ->attr('name', $name)
             ->value($value)
         ;
 
-        $this->add($element);
+        $this->add($control);
 
-        return $element;
+        return $control;
     }
 
-    public function __call($control, $args)
+    public function control($type)
     {
-        $class   = '\\diform\\control\\' . $control;
-        $element = new $class($this);
+        $class_default  = '\\diform\\control';
+        if (class_exists($class = $class_default . '\\' . $type))
+        {
+            return new $class($this);
+        }
+        else
+        {
+            $control    =   new $class_default($this);
+            $control->attr('type', $type);
+            return $control;
+        }
+    }
+    
+    public function __call($type, $args)
+    {
+        $control = $this->control($type);
 
         if (isset($args[0]))
         {
-            $element->attr('name', $args[0]);
+            $control->attr('name', $args[0]);
         }
         if (isset($args[1]))
         {
-            $element->value($args[1]);
+            $control->value($args[1]);
         }
-        $this->add($element);
+        $this->add($control);
 
-        return $element;
+        return $control;
     }
 
     public function add($control)
