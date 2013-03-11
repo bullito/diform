@@ -47,6 +47,8 @@ class dateinput extends \diform\control
         'U' => '',
     );
     
+    protected $_seconds;
+    
     public function __construct($form = null)
     {
         parent::__construct($form);
@@ -66,12 +68,23 @@ class dateinput extends \diform\control
     
     public function populate()
     {
-        $this->val();
-        if (isset($this->val))
+        parent::populate();
+        $pattern    =   '~'.$this->attributes['pattern'].'~';
+        if (preg_match($pattern, $this->val()))
         {
-            $this->attributes['value'] = date(static::$format, $this->val);
+            $arr    = date_parse_from_format(static::$format, $this->val);
+            extract($arr);
+            $this->_seconds = mktime(
+                $second ?: 0, $minute ?: 0, $hour ?: 0, 
+                $day?: 1, $month?: 1, $year ?: 1
+            );
         }
-
+        
         return $this;
+    }
+    
+    public function seconds()
+    {
+        return $this->_seconds;
     }
 }
