@@ -26,8 +26,8 @@ class events extends extendable
     
     public function on($event, $callback)
     {
-        if (isset($this->$event))
-            $this->$event[] =   $callback;
+        if (is_array($this->$event))
+            $this->{$event}[] =   $callback;
         
         return $this;
     }
