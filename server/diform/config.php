@@ -50,13 +50,9 @@ class config
             foreach ($config as $prop => $value)
             {
                 if (method_exists($this, $prop))
-                {
                     $this->$prop($value);
-                }
                 else
-                {
                     $this->$prop = $value;
-                }
             }
         }
 
@@ -70,7 +66,7 @@ class config
     }
 
     /**
-     * 
+     * set form configuration
      * @param array|\Traversable $form
      * @return \diform\config
      */
@@ -90,9 +86,7 @@ class config
             $type = isset($props['type']) ? $props['type'] : 'text';
             unset($props['type']);
 
-            $class = '\\diform\\control\\' . $type;
-
-            $control = new $class($this->_diform);
+            $control = $this->_diform->control($type);
 
             foreach ($props as $prop => $value)
                 $control->$prop($value);
