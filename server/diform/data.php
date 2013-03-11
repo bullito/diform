@@ -20,13 +20,9 @@ class data extends extendable
 
     public function extend($data)
     {
-        if (isset($data))
-        {
-            $data = (array) json_decode(json_encode($data));
-            $this->_isPopulated = $this->_isPopulated || !!$data;
-            $this->_extend($data);
-        }
-
+        $data = (array) json_decode(json_encode($data));
+        $this->_extend($data);
+        
         return $this;
     }
 
@@ -45,6 +41,17 @@ class data extends extendable
                 $this->$name = $value;
             }
         }
+    }
+    
+    public function request($request)
+    {
+        if ($request)
+        {
+            $this->_isPopulated =   true;
+            $this->extend($request);
+        }
+        
+        return $this;
     }
     
     public function isPopulated()
