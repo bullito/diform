@@ -320,7 +320,7 @@ class control
         static $error_decorator = false;
         $error_decorator or $error_decorator = $this->form->config->error_decorator;
         
-        $this->feedback(str_replace('{$error}', $error, $error_decorator));
+        $this->feedback(str_replace('${error}', $error, $error_decorator));
         return $this;
     }
     

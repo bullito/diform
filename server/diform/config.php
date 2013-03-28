@@ -17,7 +17,7 @@ class config
         ),
         /* 'legend' => '', */
         'tip' => '?',
-        'error_decorator' => '<span class="error">{$error}</span>'
+        'error_decorator' => '<span class="error">${error}</span>'
     );
     
     protected $_template;
