@@ -1,4 +1,6 @@
 <?php
+namespace diform;
+
 validator::rule('[required]', function($control)
     {
         $val = $control->val();

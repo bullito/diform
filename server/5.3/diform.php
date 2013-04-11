@@ -91,13 +91,13 @@ class diform
 
     /**
      * 
-     * @param type $config
-     * @param type $data
-     * @param type $events
+     * @param array $config
+     * @param array $events
+     * @param array $data
      */
-    public function __construct($config = null, $data = null, $events = null)
+    public function __construct($config = null, $events = null, $data = null)
     {
-        foreach(array('config', 'data', 'events') as $prop)
+        foreach(array('config', 'events', 'data') as $prop)
         {
             $class  =   '\\diform\\'.$prop;
             $this->$prop = new $class($this, $$prop);
@@ -275,10 +275,11 @@ class diform
 /**
  * 
  * @param array $config
+ * @param array $events
  * @param array $data
  * @return \diform
  */
-function diform($config = null, $data = null, $events = null)
+function diform($config = null, $events = null, $data = null)
 {
-    return new diform($config, $data, $events);
+    return new diform($config, $events, $data);
 }

@@ -16,20 +16,29 @@ class data extends extendable
      *
      * @var boolean 
      */
-    protected $_isPopulated = false;
+    protected $_isPopulated;
 
+    /**
+     * 
+     * @param array|object $data
+     * @return \diform\data
+     */
     public function extend($data)
     {
         if ($data)
         {
-            
+            $this->_isPopulated =   true;
+            $this->_extend($data);
         }
-        $data = (array) json_decode(json_encode($data));
-        $this->_extend($data);
         
         return $this;
     }
 
+    /**
+     * 
+     * @param array $data
+     * @param string $prefix
+     */
     protected function _extend($data, $prefix = '')
     {
         foreach ($data as $key => $value)
@@ -46,20 +55,19 @@ class data extends extendable
             }
         }
     }
-    
-    public function request($request)
-    {
-        if ($request)
-        {
-            $this->_isPopulated =   true;
-            $this->extend($request);
-        }
-        
-        return $this;
-    }
-    
+
+    /**
+     * 
+     * @return boolean
+     */
     public function isPopulated()
     {
+        if (!isset($this->_isPopulated))
+        {
+            $this->_isPopulated =   false;
+            $this->extend($GLOBALS['_'.strtoupper($this->_diform->config->form['method'])]);
+        }
+        
         return $this->_isPopulated;
     }
 }

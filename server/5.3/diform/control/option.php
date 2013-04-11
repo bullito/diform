@@ -15,6 +15,4 @@ class option extends checkable
         $this->content  =   $this->label;
         return $this;
     }
-    
-    
 }

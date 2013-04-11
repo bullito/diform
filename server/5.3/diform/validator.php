@@ -116,6 +116,14 @@ class validator
         return $feedbacks;
     }
 
+    public static function rules(/* */)
+    {
+        if (($rules = func_get_args()))
+        {
+            static::$rules  = array_replace_recursive(static::$rules, $rules);
+        }
+        return static::$rules;
+    }
 }
 
 include __DIR__.'/rules.php';
