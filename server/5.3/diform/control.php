@@ -13,7 +13,7 @@ namespace diform;
 class control
 {
     /**
-     *
+     * \diform instance whom control is attached to
      * @var \diform 
      */
     protected $form;

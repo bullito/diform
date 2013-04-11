@@ -20,13 +20,17 @@ class data extends extendable
 
     public function extend($data)
     {
+        if ($data)
+        {
+            
+        }
         $data = (array) json_decode(json_encode($data));
         $this->_extend($data);
         
         return $this;
     }
 
-    public function _extend($data, $prefix = '')
+    protected function _extend($data, $prefix = '')
     {
         foreach ($data as $key => $value)
         {
