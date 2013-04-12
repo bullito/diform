@@ -25,7 +25,7 @@ class withchoices extends \diform\control
         
         $control   =   "\\diform\\control\\$this->sub_control";
         
-        $item_model   =   new $control();
+        $item_model   =   new $control($this->form);
         
         /**
          * @todo manage optgroup
