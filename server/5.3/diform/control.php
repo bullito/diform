@@ -240,18 +240,16 @@ class control
 
     public function prepare()
     {
-        $this->checkValidity();
         return $this;
     }
 
     public function render($return = false)
     {
-        $this->checkValidity();
+        $this->attrs;
         $this->form->events->trigger('render_control', $this);
         $this->prepare();
         
         $return && ob_start();
-        $this->attrs;
         $has_tag = isset($this->tag);
         $has_content = isset($this->content);
         
