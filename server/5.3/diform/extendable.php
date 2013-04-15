@@ -22,7 +22,7 @@ class extendable
     public function __construct(\diform $diform = null, $extend = null)
     {
         $this->_diform  =   $diform;
-        $this->extend(static::$defaults);
+        $this->extend(static::$defaults)->extend($extend);
     }
     
     public function extend($data)
