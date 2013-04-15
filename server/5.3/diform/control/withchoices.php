@@ -58,8 +58,8 @@ class withchoices extends \diform\control
             switch($this->labelization['type'])
             {
                 case 'out':
-                    isset($this->attributes['id']) or ($this->attributes['id'] =   $this->attributes['name'] . '_' . 
-                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['value'])
+                    isset($this->attributes['id']) or ($this->attributes['id'] =   
+                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name'] . '_' . $this->attributes['value'])
                     );
                     $label      =   "<label for=\"{$this->attributes['id']}\">$item->label</label>"; 
                     //  no break
