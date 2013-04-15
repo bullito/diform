@@ -73,7 +73,7 @@ class withchoices extends \diform\control
                         case 'right':    $render =   $control.$label;
                     }
                     
-                    return ($type == 'in') ? "<label>$render</label>" : $render;
+                    return ($this->labelization['type'] == 'in') ? "<label>$render</label>" : $render;
                     
                 case 'custom':
                 case 'func':
