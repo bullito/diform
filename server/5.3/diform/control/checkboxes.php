@@ -9,6 +9,7 @@ class checkboxes extends withchoices
 {
     protected $tag;
     protected $sub_control = 'checkbox';
+    protected $labelization = array('in', 'right');
     
     public function render_item($item)
     {

@@ -13,6 +13,7 @@ class withchoices extends \diform\control
      */
     protected $choices = array();
     protected $sub_control;
+    protected $labelization;
     
     public function subname()
     {
@@ -52,7 +53,41 @@ class withchoices extends \diform\control
     
     public function render_item($item)
     {
-        return $item->render(true);
+        if (is_array($this->labelization))
+        {
+            switch($this->labelization['type'])
+            {
+                case 'out':
+                    isset($this->attributes['id']) or ($this->attributes['id'] =   $this->attributes['name'] . '_' . 
+                        preg_replace('/[^0-9a-zA-Z_]/', '_', $this->attributes['value'])
+                    );
+                    $label      =   "<label for=\"{$this->attributes['id']}\">$item->label</label>"; 
+                    //  no break
+                case 'in':
+                    $label      =   isset($label) ? $label : $item->label;
+                    $control    =   $this->render(true);
+                    
+                    switch($this->labelization['value'])
+                    {
+                        case 'left':     $render =   $label.$control;
+                        case 'right':    $render =   $control.$label;
+                    }
+                    
+                    return ($type == 'in') ? "<label>$render</label>" : $render;
+                    
+                case 'custom':
+                case 'func':
+                    $func   =   $this->labelization['value'];
+                    return $func($item);
+                
+                default:
+                    throw new \diform\exception(__METHOD__.": labelization [$this->labelization] not supported");
+            }
+        }
+        else
+        {
+            return $item->render(true);
+        }
     }
     
     public function choices(/* $value */)
@@ -71,5 +106,14 @@ class withchoices extends \diform\control
     public function populate()
     {
         return $this;
+    }
+    
+    /**
+     * 
+     * @param string $position before|outer|after|null
+     */
+    public function labelization($type, $value)
+    {
+        $this->labelization =   compact('type', 'value');
     }
 }
