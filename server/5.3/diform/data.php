@@ -23,7 +23,7 @@ class data extends extendable
      * @var array 
      */
     protected $_value = array();
-
+    
     /**
      * 
      * @param array|object $data
@@ -31,12 +31,7 @@ class data extends extendable
      */
     public function extend($data)
     {
-        if ($data)
-        {
-            $this->_isPopulated =   true;
-            $this->_extend(json_decode(json_encode($data)));    //  object/array
-        }
-        
+        $this->_extend(json_decode(json_encode($data)));    //  object/array
         return $this;
     }
 
@@ -71,7 +66,7 @@ class data extends extendable
         if (!isset($this->_isPopulated))
         {
             $this->_isPopulated =   false;
-            $this->extend($GLOBALS['_'.strtoupper($this->_diform->config->form['method'])]);
+            $this->request($GLOBALS['_'.strtoupper($this->_diform->config->form['method'])]);
         }
         
         return $this->_isPopulated;
@@ -84,6 +79,17 @@ class data extends extendable
     public function value()
     {
         return $this->_value;
+    }
+    
+    public function request($data)
+    {
+        if ($data)
+        {
+            $this->_isPopulated =   true;
+            $this->extend($data);    //  object/array
+        }
+        
+        return $this;
     }
 }
 
