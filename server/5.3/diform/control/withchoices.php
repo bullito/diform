@@ -64,7 +64,7 @@ class withchoices extends \diform\control
                     $label      =   "<label for=\"{$this->attributes['id']}\">$item->label</label>"; 
                     //  no break
                 case 'in':
-                    $label      =   isset($label) ? $label : $item->label;
+                    isset($label) || $label = $item->label;
                     $control    =   $item->render(true);
                     
                     switch($this->labelization['value'])
