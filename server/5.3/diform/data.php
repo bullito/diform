@@ -17,6 +17,12 @@ class data extends extendable
      * @var boolean 
      */
     protected $_isPopulated;
+    
+    /**
+     *
+     * @var array 
+     */
+    protected $_value = array();
 
     /**
      * 
@@ -51,7 +57,7 @@ class data extends extendable
             }
             else
             {
-                $this->$name = $value;
+                $this->$name = $this->_value[$name] = $value;
             }
         }
     }
@@ -69,6 +75,15 @@ class data extends extendable
         }
         
         return $this->_isPopulated;
+    }
+    
+    /**
+     * 
+     * @return array
+     */
+    public function value()
+    {
+        return $this->_value;
     }
 }
 
