@@ -47,6 +47,7 @@ class dateinput extends \diform\control
         'U' => '',
     );
     
+    protected $_format;
     protected $_seconds;
     
     public function __construct($form = null)
@@ -54,6 +55,7 @@ class dateinput extends \diform\control
         parent::__construct($form);
         $nodes = explode('\\', get_class($this));
         $this->attr('type', array_pop($nodes));
+        $this->_format || $this->_format = static::$format;
         $this->attr('pattern', self::format2pattern(static::$format));
     }
     
@@ -80,6 +82,13 @@ class dateinput extends \diform\control
             );
         }
         
+        return $this;
+    }
+    
+    public function format($format)
+    {
+        $this->_format  =   $format;
+        $this->attr('pattern', self::format2pattern(static::$format));
         return $this;
     }
     
