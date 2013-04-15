@@ -115,5 +115,6 @@ class withchoices extends \diform\control
     public function labelization($type, $value)
     {
         $this->labelization =   compact('type', 'value');
+        return $this;
     }
 }
