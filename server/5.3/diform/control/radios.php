@@ -9,7 +9,7 @@ class radios extends withchoices {
     
     protected $tag;
     protected $sub_control = 'radio';
-    protected $labelization = array('in', 'right');
+    protected $labelization = array('type' => 'in', 'value' => 'right');
 
     public function render_item($item)
     {
