@@ -34,7 +34,7 @@ class data extends extendable
         if ($data)
         {
             $this->_isPopulated =   true;
-            $this->_extend($data);
+            $this->_extend(json_decode(json_decode($data)));    //  object/array
         }
         
         return $this;
