@@ -332,12 +332,12 @@ class control
         ;
     }
     
-    public function rule($rule, $func, $feedback = null)
+    public function rule($name, $check, $feedback = null)
     {
-        assert(!empty($rule));
-        assert(is_callable($func));
+        assert(!empty($name));
+        assert(is_callable($check));
         unset($this->checkValidity);
-        $this->rules[$rule] =   array($rule, $func, $feedback);
+        $this->rules[$name] =   array($name, $check, $feedback);
         return $this;
     }
     
