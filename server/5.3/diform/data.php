@@ -42,19 +42,23 @@ class data extends extendable
      */
     protected function _extend($data, $prefix = '')
     {
-        foreach ($data as $key => $value)
+        if ($data)
         {
-            $name = $prefix ? ($prefix . '[' . $key . ']') : $key;
+            foreach ($data as $key => $value)
+            {
+                $name = $prefix ? ($prefix . '[' . $key . ']') : $key;
 
-            if (is_object($value))
-            {
-                $this->_extend($value, $name);
-            }
-            else
-            {
-                $this->$name = $this->_value[$name] = $value;
+                if (is_object($value))
+                {
+                    $this->_extend($value, $name);
+                }
+                else
+                {
+                    $this->$name = $this->_value[$name] = $value;
+                }
             }
         }
+        
     }
 
     /**
