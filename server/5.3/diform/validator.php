@@ -59,8 +59,9 @@ class validator
         {
             if ($rule === true)
                 $rule = self::$rules[$matcher];
-
-            if (!$rule['check']($control))
+            
+            $func = $rule['check'];
+            if (!$func($control))
                 return static::feedback4ControlAndRule($control, $rule);
         }
 
