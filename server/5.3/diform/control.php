@@ -335,7 +335,7 @@ class control
     public function rule($name, $check, $feedback = null)
     {
         assert(!empty($name));
-        assert(is_callable($check));
+        assert(is_callable($check) or function_exists($check));
         unset($this->checkValidity);
         $this->rules[$name] =   compact('name', 'check', 'feedback');
         return $this;
