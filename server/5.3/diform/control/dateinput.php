@@ -78,7 +78,7 @@ class dateinput extends \diform\control
             extract($arr);
             $this->_seconds = mktime(
                 $second ?: 0, $minute ?: 0, $hour ?: 0, 
-                $day?: 1, $month?: 1, $year ?: 1
+                 $month?: 1, $day?: 1, $year ?: 1
             );
         }
         
