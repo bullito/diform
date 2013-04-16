@@ -77,8 +77,12 @@ class dateinput extends \diform\control
             $arr    = date_parse_from_format(static::$format, $this->val);
             extract($arr);
             $this->_seconds = mktime(
-                 $hour ?: 0, $minute ?: 0, $second ?: 0, 
-                 $month?: 1, $day?: 1, $year ?: 1
+                $hour !== false ? $hour : date('H'), 
+                $minute !== false ? $minute : date('i'), 
+                $second ? $second : date('s'), 
+                $month ? $month: date('n'), 
+                $day ? $day: date('j'), 
+                $year ? $year : date('Y')
             );
         }
         
