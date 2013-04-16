@@ -337,7 +337,7 @@ class control
         assert(!empty($name));
         assert(is_callable($check));
         unset($this->checkValidity);
-        $this->rules[$name] =   array($name, $check, $feedback);
+        $this->rules[$name] =   compact('name', 'check', 'feedback');
         return $this;
     }
     
