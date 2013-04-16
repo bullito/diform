@@ -23,6 +23,18 @@ class withchoices extends \diform\control
     public function prepare()
     {
         $this->content  =   '';
+        foreach($this->items() as $item)
+        {
+            $this->content  .=   $this->render_item($item);
+        }
+        
+        return $this;
+    }
+    
+    
+    public function items()
+    {
+        $items  =   array();
         
         $control   =   "\\diform\\control\\$this->sub_control";
         
@@ -45,10 +57,10 @@ class withchoices extends \diform\control
             {
                 $item->val($val);
             }
-            $this->content .=  $this->render_item($item);
+            $items[]    =   $item;
         }
         
-        return $this;
+        return $items;
     }
     
     public function render_item($item)
