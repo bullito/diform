@@ -79,10 +79,10 @@ class dateinput extends \diform\control
             $this->_seconds = mktime(
                 $hour !== false ? $hour : date('H'), 
                 $minute !== false ? $minute : date('i'), 
-                $second ? $second : date('s'), 
-                $month ? $month: date('n'), 
-                $day ? $day: date('j'), 
-                $year ? $year : date('Y')
+                $second !== false ? $second : date('s'), 
+                $month !== false ? $month: date('n'), 
+                $day !== false ? $day: date('j'), 
+                $year !== false ? $year : date('Y')
             );
         }
         
