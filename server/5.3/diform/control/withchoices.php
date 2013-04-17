@@ -71,7 +71,9 @@ class withchoices extends \diform\control
             {
                 case 'out':
                     isset($item->attributes['id']) or ($item->attributes['id'] =   
-                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name'] . '_' . $item->attributes['value'])
+                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name']) 
+                        . '-' .
+                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['value'])
                     );
                     $label      =   "<label for=\"{$item->attributes['id']}\">$item->label</label>"; 
                     //  no break
