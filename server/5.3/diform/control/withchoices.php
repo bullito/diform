@@ -134,4 +134,9 @@ class withchoices extends \diform\control
         $this->labelization =   compact('type', 'value');
         return $this;
     }
+    
+    public static function inchoices($control)
+    {
+        return in_array($control->val(), $control->choices());
+    }
 }
