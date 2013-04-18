@@ -11,6 +11,11 @@ class radios extends withchoices {
     protected $sub_control = 'radio';
     protected $labelization = array('type' => 'in', 'value' => 'right');
 
+    public function val()
+    {
+        return $this->form->data->{$this->name};
+    }
+    
     public function items()
     {
         $items  =   parent::items();
