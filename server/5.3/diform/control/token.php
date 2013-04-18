@@ -16,8 +16,22 @@ class token extends \diform\control
     {
         parent::__construct($form);
         
+        $token = static::register();
         $this->rule('token', function($control) {
-            return ture;
+            $class = get_class($control);
+            return in_array($control->val(), $class::registered());
         });
+        
+        $this->val();
+    }
+    
+    public static function register() 
+    {
+        $token = uniqid('diform_token_', true);
+    }
+    
+    public function registered()
+    {
+        return $_SESSION['diform_token'];
     }
 }
