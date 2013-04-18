@@ -58,18 +58,18 @@ class session implements storing
     
     public function check($token)
     {
-        if (isset($_SESSION[$token]))
+        if (isset($_SESSION[static::$register_key][$token]))
         {
-            if ($_SESSION[$token] === true)
+            if ($_SESSION[static::$register_key][$token] === true)
             {
-                $_SESSION[$token]   =   isset($_SERVER['REQUEST_TIME']) ?
+                $_SESSION[static::$register_key][$token]   =   isset($_SERVER['REQUEST_TIME']) ?
                      $_SERVER['REQUEST_TIME'] : ($_SERVER['REQUEST_TIME'] = time())   
                 ;
                 return true;
             }
             else
             {
-                return ($_SESSION[$token] === $_SERVER['REQUEST_TIME']);
+                return ($_SESSION[static::$register_key][$token] === $_SERVER['REQUEST_TIME']);
             }
         }
         else
