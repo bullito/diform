@@ -69,6 +69,9 @@ class withchoices extends \diform\control
         {
             switch($this->labelization['type'])
             {
+                case 'none':
+                case 'off':
+                    break;
                 case 'out':
                     isset($item->attributes['id']) or ($item->attributes['id'] =   
                         preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name']) 
@@ -130,5 +133,10 @@ class withchoices extends \diform\control
     {
         $this->labelization =   compact('type', 'value');
         return $this;
+    }
+    
+    public static function inchoices($control)
+    {
+        return in_array($control->val(), $control->choices());
     }
 }
