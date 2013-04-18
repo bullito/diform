@@ -7,7 +7,7 @@ namespace diform\control;
  */
 class token extends \diform\control
 {
-    protected static $register_key = 'diform_tokens';
+    public $storing = 'session';
     
     public $attributes = array(
         'type' => 'hidden',
@@ -18,49 +18,17 @@ class token extends \diform\control
     {
         parent::__construct($form);
         
-        session_start();
-        $this->value = static::register();
+        $storing    =   "token\\$this->storing";
+        $this->storing  =   new $storing;
+        
+        $this->value = $this->storing->add();
         
         $this->rule('token', function($control) {
             
-            $class = get_class($control);
-            
-            if (in_array($token = $control->val(), $class::registered()))
-            {
-                static::unregister($token);
-                return true;
-            }
+            return $control->storing->check();
         });
     }
-    
-    public static function generate()
-    {
-        return uniqid('diform_token_', true);
-    }
 
-    public static function register() 
-    {
-        $token = static::generate();
-        
-        $_SESSION[static::$register_key][$token]  =   true;
-        
-        return $token;
-    }
-    
-    public static function unregister($token)
-    {
-        unset($_SESSION[static::$register_key][$token]);
-    }
-    
-    /**
-     * 
-     * @return array
-     */
-    public function registered()
-    {
-        return $_SESSION[static::$register_key];
-    }
-    
     /**
      * avoid replacing value by request input
      * request input will be kept 
