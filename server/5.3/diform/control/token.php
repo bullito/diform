@@ -8,7 +8,6 @@ namespace diform\control;
 class token extends \diform\control
 {
     protected static $register_key = 'diform_tokens';
-    protected $generated;
     
     public $attributes = array(
         'type' => 'hidden',
@@ -20,7 +19,7 @@ class token extends \diform\control
         parent::__construct($form);
         
         session_start();
-        $this->generated = static::register();
+        $this->value = static::register();
         
         $this->rule('token', function($control) {
             
@@ -32,8 +31,6 @@ class token extends \diform\control
                 return true;
             }
         });
-        
-        $this->val();
     }
     
     public static function generate()
