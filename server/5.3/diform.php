@@ -5,8 +5,9 @@
  *
  * @author ble
  * 
- * @method \diform\control\radios radios(string $name, mixed $value) add a textarea to form
- * @method \diform\control\select select(string $name, mixed $value) add a textarea to form
+ * @method \diform\control\radio radio(string $name, mixed $value) add a radio button to form
+ * @method \diform\control\radios radios(string $name, mixed $value) add radios with the same name to form
+ * @method \diform\control\select select(string $name, mixed $value) add a drop listo form
  * @method \diform\control\text text(string $name, mixed $value) add a textfield to form
  * @method \diform\control\textarea textarea(string $name, mixed $value) add a textarea to form
  * 
