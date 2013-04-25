@@ -11,22 +11,24 @@ class token extends \diform\control
     
     public $attributes = array(
         'type' => 'hidden',
-        'pattern' => '^-?\d*\.\d*$'
+        'name' => 'token'
     );
     
     public function __construct($form = null)
     {
         parent::__construct($form);
         
-        $storing    =   "token\\$this->storing";
-        $this->storing  =   new $storing;
+        $storing    =   __NAMESPACE__."\\token\\$this->storing";
+        $this->storing  =       $storing::instance();
         
-        $this->value = $this->storing->add();
+        $this->attributes['value'] = $this->storing->add();
         
         $this->rule('token', function($control) {
-            
-            return $control->storing->check();
-        });
+            return $control->storing->check($control->val());
+        }, array(
+            'fr' => 'token non valide', 
+            'en' => 'token not valid')
+        );
     }
 
     /**
