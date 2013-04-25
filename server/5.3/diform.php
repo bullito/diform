@@ -292,9 +292,26 @@ class diform
         return $this->render(true);
     }
 
+    /**
+     * 
+     * @param array $request
+     * @return \diform
+     */
     public function request($request)
     {
         $this->data->request($request);
+        return $this;
+    }
+    
+    /**
+     * 
+     * @param string $event
+     * @param callable $callback
+     * @return \diform
+     */
+    public function on($event, $callback)
+    {
+        $this->events->on($event, $callback);
         return $this;
     }
 }
