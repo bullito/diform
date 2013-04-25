@@ -19,7 +19,10 @@ class textarea extends \diform\control
     {
         $this->val();
         
-        $this->content = isset($this->val) ? $this->val : '';
+        $this->content = isset($this->val) ? 
+            str_replace(array('<', '>'), array('&lt;', '&gt;'), stripslashes($this->val)) 
+            : ''
+        ;
         
         return $this;
     }

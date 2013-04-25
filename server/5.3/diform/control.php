@@ -84,25 +84,13 @@ class control
     public function __construct($form = null)
     {
         $this->form = $form;
-        $this->syncValidatorRules();
+        
+        foreach($this->attributes as $attr => $value)
+        {
+            $this->attr($attr, $value);
+        }
     }
     
-    /**
-     * 
-     * @return \diform\control
-     */
-    public function syncValidatorRules()
-    {
-        unset($this->checkValidity);
-        foreach($this->attributes as $attribute => $value)
-        {
-            if (($rule = validator::rules4Attribute($attribute)))
-            {
-                $this->rules[$rule['matcher']]  =   true;
-            }
-        }
-        return $this;
-    }
 
     /**
      * Return method result or attribute
@@ -144,6 +132,11 @@ class control
 
     public function attr($name /* , $value = null */)
     {
+        if (preg_match('/[^a-zA-Z0-9_-]/', $name))
+        {
+            throw new exception(__METHOD__.": attribute name '$name' - wrong format");
+        }
+        
         if (func_num_args() == 2)
         {
             unset($this->attrs);
@@ -216,8 +209,9 @@ class control
         else if (isset($this->val))
         {
             return $this->val;
+        
         }
-        else if (isset($this->form->data->{$this->name}))
+        else if (isset($this->name) && $this->form->data->isPopulated() && isset($this->form->data->{$this->name}))
         {
             return $this->val = $this->form->data->{$this->name};
         }

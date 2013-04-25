@@ -2,14 +2,14 @@
 
 /**
  * Description of diform
- *
- * @author ble
+ * @author Buu-Lâm LÊ buulam.le[at]gmail.com
  * 
- * @method \diform\control\radio radio(string $name, mixed $value) add a radio button to form
- * @method \diform\control\radios radios(string $name, mixed $value) add radios with the same name to form
- * @method \diform\control\select select(string $name, mixed $value) add a drop listo form
- * @method \diform\control\text text(string $name, mixed $value) add a textfield to form
- * @method \diform\control\textarea textarea(string $name, mixed $value) add a textarea to form
+ * @method \diform|\diform\control\radio radio(string $name, mixed $value) add a radio button to form
+ * @method \diform|\diform\control\radios radios(string $name, mixed $value) add radios with the same name to form
+ * @method \diform|\diform\control\select select(string $name, mixed $value) add a drop list to form
+ * @method \diform|\diform\control\text text(string $name, mixed $value) add a textfield to form
+ * @method \diform|\diform\control\textarea textarea(string $name, mixed $value) add a textarea to form
+ * @method \diform|\diform\control\token token(string $name = 'token') add a token to form
  * 
  */
 class diform
@@ -23,7 +23,12 @@ class diform
      * @var array|of|\diform\control 
      */
     protected $controls = array();
-
+    
+    /**
+     * allow chaining inputs or not
+     * @var bool 
+     */
+    protected $_chained = false;
     /**
      *
      * @var \diform\config 
@@ -85,15 +90,21 @@ class diform
             if (!isset($value) || $value === false)
                 continue;
             else if ($value === true)
-                $arr[] = "$key=\"$key\"";
+                $value = $key;
             else if (is_array($value))
-                $arr[] = $key . '="' . implode(' ', $value) . '"';
+                $value = implode(' ', array_map(array(get_class(), 'escape'), $value));
             else
-                $arr[] = "$key=\"$value\"";
+                $value = static::escape($value);
+            
+            $arr[] = "$key=\"$value\"";
         }
         return implode(' ', $arr);
     }
 
+    public static function escape($value)
+    {
+        return str_replace(array("'", '"'), array('&#39;', '&quot;'), stripslashes($value));
+    }
     /**
      * 
      * @param array $config
@@ -110,11 +121,22 @@ class diform
     }
 
     /**
+     * Enables/disables chaining inputs declaration
+     * @param type $boo
+     * @return \diform
+     */
+    public function chain($boo = true)
+    {
+        $this->_chained = $boo;
+        
+        return $this;
+    }
+    /**
      * Equivalent to the add method
      * @param string $type
      * @param string $name
      * @param mixed $val
-     * @return \diform\control
+     * @return \diform|\diform\control
      */
     public function __invoke($name, $type = 'text', $value = null)
     {
@@ -125,8 +147,8 @@ class diform
         ;
 
         $this->add($control);
-
-        return $control;
+        
+        return $this;
     }
 
     public function control($type)
@@ -158,13 +180,13 @@ class diform
         }
         $this->add($control);
 
-        return $control;
+        return $this->_chained ? $this : $control;
     }
 
     public function add($control)
     {
         $name = $control->attr('name');
-        //$this->controls[] = $control;
+        
         if (!isset($name))
         {
             $this->controls[] = $control;
