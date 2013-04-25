@@ -3,8 +3,18 @@ namespace diform\control\token;
 
 class session implements storing
 {
+    /**
+     * key name for tokens in session
+     * @var string 
+     */
     protected static $register_key = 'diform_tokens';
+    
+    /**
+     * singleton
+     * @var session 
+     */
     protected static $instance;
+    
     
     public static function instance()
     {
