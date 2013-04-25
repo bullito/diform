@@ -6,7 +6,7 @@ class session implements storing
     protected static $register_key = 'diform_tokens';
     protected static $instance;
     
-    public function instance()
+    public static function instance()
     {
         return self::$instance ?: self::$instance = new self;
     }
@@ -16,7 +16,7 @@ class session implements storing
         session_start();
     }
 
-    protected function __destruct() 
+    public function __destruct() 
     {
         foreach($this->values() as $token => $val)
         {
@@ -35,7 +35,7 @@ class session implements storing
     
     public function add() 
     {
-        $token = static::generate();
+        $token = $this->generate();
         
         $_SESSION[static::$register_key][$token]  =   true;
         

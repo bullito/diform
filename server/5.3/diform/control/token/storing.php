@@ -7,5 +7,5 @@ interface storing
     public function generate(); 
     public function add(); 
     public function values(); 
-    public function remove();
+    public function remove($token);
 }
