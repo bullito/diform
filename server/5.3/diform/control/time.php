@@ -7,5 +7,5 @@ namespace diform\control;
  */
 class time extends dateinput
 {
-     public static $format = 'H:i:s';
+     public static $format = 'H:i';
 }
