@@ -7,8 +7,10 @@
  * @method \diform|\diform\control\radio radio(string $name, mixed $value) add a radio button to form
  * @method \diform|\diform\control\radios radios(string $name, mixed $value) add radios with the same name to form
  * @method \diform|\diform\control\select select(string $name, mixed $value) add a drop list to form
+ * @method \diform|\diform\control\submit submit(string $name = 'token') add a submit to form
  * @method \diform|\diform\control\text text(string $name, mixed $value) add a textfield to form
  * @method \diform|\diform\control\textarea textarea(string $name, mixed $value) add a textarea to form
+ * @method \diform|\diform\control\time time(string $name, mixed $value) add a timefield to form
  * @method \diform|\diform\control\token token(string $name = 'token') add a token to form
  * 
  */
@@ -29,6 +31,7 @@ class diform
      * @var bool 
      */
     protected $_chained = false;
+    
     /**
      *
      * @var \diform\config 
@@ -68,6 +71,10 @@ class diform
             spl_autoload_unregister(array(__CLASS__, 'loadClass'));
     }
 
+    /**
+     * autoload method
+     * @param string $class
+     */
     public static function loadClass($class)
     {
         $path = self::PATH . '/' . str_replace('\\', '/', $class) . '.php';
@@ -101,6 +108,11 @@ class diform
         return implode(' ', $arr);
     }
 
+    /**
+     * prepares attribute value to be rendered (codeigniter style)
+     * @param string $value
+     * @return string
+     */
     public static function escape($value)
     {
         return str_replace(array("'", '"'), array('&#39;', '&quot;'), stripslashes($value));
@@ -132,25 +144,28 @@ class diform
         return $this;
     }
     /**
-     * Equivalent to the add method
+     * Alternate way to the add a control
      * @param string $type
      * @param string $name
-     * @param mixed $val
-     * @return \diform|\diform\control
+     * @param mixed $value
+     * @param array $options
+     * @return \diform
      */
-    public function __invoke($name, $type = 'text', $value = null)
+    public function __invoke($name, $type = 'text', $value = null, $batch = null)
     {
-        $control = $this->control($type);
-        $control
-            ->attr('name', $name)
-            ->value($value)
-        ;
-
-        $this->add($control);
-        
-        return $this;
+        return $this->add(
+            $this->control($type)
+                ->attr('name', $name)
+                ->value($value)
+                ->batch($batch)
+        );
     }
 
+    /**
+     * instanciate new \diform\control by type
+     * @param string $type
+     * @return \diform\control
+     */
     public function control($type)
     {
         $class_default  = '\\diform\\control';
@@ -166,6 +181,13 @@ class diform
         }
     }
     
+    /**
+     * Alternate way to the add a control
+     * @tutorial hh
+     * @param string $type
+     * @param args $args
+     * @return \diform|\diform\control
+     */
     public function __call($type, $args)
     {
         $control = $this->control($type);
@@ -173,16 +195,25 @@ class diform
         if (isset($args[0]))
         {
             $control->attr('name', $args[0]);
+            
+            
         }
         if (isset($args[1]))
         {
             $control->value($args[1]);
         }
-        $this->add($control);
-
-        return $this->_chained ? $this : $control;
+        if (isset($args[2]) && is_array($args[2]))
+        {
+            $control->batch($args[2]);
+        }
+        return $this->add($control);
     }
 
+    /**
+     * Add a control to the form
+     * @param \diform\control $control
+     * @return \diform|\diform\control
+     */
     public function add($control)
     {
         $name = $control->attr('name');
@@ -199,8 +230,8 @@ class diform
         {
             $this->controls[$name] = $control;
         }
-
-        return $this;
+    
+        return $this->_chained ? $this : $control;
     }
 
     /**
@@ -216,7 +247,7 @@ class diform
     }
 
     /**
-     * 
+     * set/get \diform\config instance
      * @param array|\Traversable $config
      * @return \diform\config
      */
@@ -228,7 +259,7 @@ class diform
     }
 
     /**
-     * 
+     * set/get \diform\data instance
      * @param array|\Traversable $data
      * @return diform\data
      */
@@ -261,6 +292,10 @@ class diform
         return $errors ? : true;
     }
 
+    /**
+     * set/get lang (en, fr, ...)
+     * @return type
+     */
     public function lang(/* $value */)
     {
         return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
@@ -270,8 +305,8 @@ class diform
 
     /**
      * 
-     * @param boolean $return
-     * @return string|diform
+     * @param bool $return
+     * @return string|\diform
      */
     public function render($return = false)
     {
@@ -304,7 +339,7 @@ class diform
     }
     
     /**
-     * 
+     * add a trigger event to form
      * @param string $event
      * @param callable $callback
      * @return \diform
