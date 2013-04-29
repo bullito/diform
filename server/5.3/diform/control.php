@@ -397,4 +397,21 @@ class control
         $this->error($error);
         return $this;
     }
+    
+    /**
+     * @param array|object|\Traversable $batch
+     * @return \diform\control
+     */
+    public function batch($batch)
+    {
+        if ($batch)
+        {
+            foreach($batch as $method => $arg)
+            {
+                $this->$method($arg);
+            }
+        }
+        
+        return $this;
+    }
 }
