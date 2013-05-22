@@ -77,6 +77,13 @@ class control
      * @var bool 
      */
     protected $checkValidity;
+    
+    /**
+     *
+     * @var synchronize val and attributes[value] 
+     */
+    protected $sync_value = true;
+    
     /**
      * 
      * @param \diform $form
@@ -224,7 +231,8 @@ class control
     public function populate()
     {
         $this->val();
-        if (isset($this->val))
+        
+        if ($this->sync_value && isset($this->val))
         {
             $this->attributes['value'] = $this->val;
         }
