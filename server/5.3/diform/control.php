@@ -218,7 +218,7 @@ class control
             return $this->val;
         
         }
-        else if (isset($this->name) && isset($this->form->data->{$this->name}))
+        else if (isset($this->name) && ($this->form->data->isPopulated() or true) && isset($this->form->data->{$this->name}))
         {
             return $this->val = $this->form->data->{$this->name};
         }
