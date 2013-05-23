@@ -68,3 +68,14 @@ validator::rule('[max]', function($control)
     'en' => 'too high',
     'fr' => 'valeur trop &eacute;lev&eacute;e'
 ));
+
+validator::rule('[data-at-least]', function($control)
+    {
+        $at_least   = $control->attributes['data-at-least'];
+        $value      = $control->val();
+
+        return (is_array($value) && count($value) >= $at_least);
+    }, array(
+    'en' => 'please select more choices',
+    'fr' => 'Veuillez cocher plus de choix'
+));
