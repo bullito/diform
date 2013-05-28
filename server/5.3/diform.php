@@ -94,7 +94,7 @@ class diform
         
         foreach ($vector as $key => $value)
         {
-            if (!isset($value) || $value === false)
+            if (in_array($value, array(null, '', false, array()), true))
                 continue;
             else if ($value === true)
                 $value = $key;
@@ -156,7 +156,7 @@ class diform
         return $this->add(
             $this->control($type)
                 ->attr('name', $name)
-                ->value($value)
+                ->val($value)
                 ->batch($batch)
         );
     }
@@ -200,7 +200,7 @@ class diform
         }
         if (isset($args[1]))
         {
-            $control->value($args[1]);
+            $control->val($args[1]);
         }
         if (isset($args[2]) && is_array($args[2]))
         {
