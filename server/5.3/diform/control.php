@@ -7,8 +7,8 @@ namespace diform;
  * @author ble
  * @property mixed $value
  * @property string $type
- * @property string $name
- * 
+ * @property string $attrs html string of attributes/values
+ *  
  */
 class control
 {
@@ -37,31 +37,25 @@ class control
     protected $val;
     
     /**
-     *
+     * label
      * @var string 
      */
     protected $label;
     
     /**
-     *
+     * tip
      * @var string 
      */
     protected $tip;
     
     /**
-     *
+     * feedback
      * @var string 
      */
     protected $feedback;
     
     /**
-     *
-     * @var assoc 
-     */
-    protected $attributes = array();
-    
-    /**
-     *
+     * 
      * @var string 
      */
     protected $name;
@@ -73,10 +67,17 @@ class control
     protected $rules = array();
 
     /**
-     *
+     * 
      * @var bool 
      */
     protected $checkValidity;
+    
+    /**
+     * assoc of html attributes of control
+     * @var array 
+     */
+    protected $attributes = array();
+    
     /**
      * 
      * @param \diform $form
@@ -108,6 +109,25 @@ class control
         ;
     }
 
+    /**
+     * Return method result or attribute
+     * @param string $name
+     * @return mixed
+     */
+    public function __set($name, $value)
+    {
+        return method_exists($this, $name) ? 
+            $this->$name($value) : 
+            $this->attributes[$name] = $value
+        ;
+    }
+    
+    /**
+     * 
+     * @param string $name
+     * @param array $args
+     * @return \diform\control
+     */
     public function __call($name, $args)
     {
         unset($this->attrs);
@@ -178,6 +198,10 @@ class control
         ;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function attrs()
     {
         $this->populate();
@@ -185,31 +209,40 @@ class control
         return $this->attrs = \diform::attrs($this->attributes);
     }
 
-    public function label(/* $value */)
+    /**
+     * setter/getter label
+     * @param string $value
+     * @return string|\diform\control
+     */
+    public function label($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
     
-    public function tip(/* $value */)
+    /**
+     * setter/getter tip
+     * @param string $value
+     * @return string|\diform\control
+     */
+    public function tip($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
     
-    public function val(/* $value */)
+    public function val($value = null)
     {
-        if (func_num_args() == 1)
+        if (func_num_args())
         {
-            $this->val = func_get_arg(0);
+            $this->val = $value;
             return $this;
         }
         else if (isset($this->val))
         {
             return $this->val;
-        
         }
         else if (isset($this->name) && $this->form->data->isPopulated() && isset($this->form->data->{$this->name}))
         {
@@ -239,7 +272,7 @@ class control
 
     public function render($return = false)
     {
-        $this->attrs;
+        $this->attrs();
         $this->form->events->trigger('render_control', $this);
         $this->prepare();
         
@@ -319,13 +352,25 @@ class control
         return $this;
     }
     
-    public function rules(/* $value */)
+    /**
+     * 
+     * @param array $value
+     * @return array|\diform\control
+     */
+    public function rules($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
     
+    /**
+     * 
+     * @param string $name
+     * @param callable $check
+     * @param array $feedback
+     * @return \diform\control
+     */
     public function rule($name, $check, $feedback = null)
     {
         assert(!empty($name));
@@ -370,23 +415,37 @@ class control
         return $this;
     }
 
-    public function form(/* $value */)
+    /**
+     * 
+     * @param \diform $value
+     * @return \diform\control|\diform
+     */
+    public function form(\diform $value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
 
-    public function attributes(/* $value */)
+    /**
+     * 
+     * @param array $value
+     * @return array|\diform\control
+     */
+    public function attributes($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
 
-    public function feedback(/* $value */)
+    /**
+     * @param string $value
+     * @return string|\diform\control
+     */
+    public function feedback($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
+        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
