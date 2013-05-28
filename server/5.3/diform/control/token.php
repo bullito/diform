@@ -9,7 +9,9 @@ class token extends \diform\control
 {
     public $storing = 'session';
     
-    public $attributes = array(
+    protected $sync_value = false;
+    
+    protected $attributes = array(
         'type' => 'hidden',
         'name' => 'token'
     );
@@ -29,17 +31,5 @@ class token extends \diform\control
             'fr' => 'token non valide', 
             'en' => 'token not valid')
         );
-    }
-
-    /**
-     * avoid replacing value by request input
-     * request input will be kept 
-     * to compare with registered tokens
-     * @return \diform\control\token
-     */
-    public function populate()
-    {
-        $this->val();
-        return $this;
     }
 }

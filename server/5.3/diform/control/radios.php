@@ -13,7 +13,9 @@ class radios extends withchoices {
 
     public function val()
     {
-        return $this->form->data->{$this->name};
+        return isset($this->form->data->{$this->name}) ?
+            $this->form->data->{$this->name} : null
+        ;
     }
     
     public function items()

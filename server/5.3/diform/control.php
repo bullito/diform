@@ -79,6 +79,12 @@ class control
     protected $attributes = array();
     
     /**
+     *
+     * @var synchronize val and attributes[value] 
+     */
+    protected $sync_value = true;
+    
+    /**
      * 
      * @param \diform $form
      */
@@ -244,7 +250,7 @@ class control
         {
             return $this->val;
         }
-        else if (isset($this->name) && $this->form->data->isPopulated() && isset($this->form->data->{$this->name}))
+        else if (isset($this->name) && ($this->form->data->isPopulated() || true) && isset($this->form->data->{$this->name}))
         {
             return $this->val = $this->form->data->{$this->name};
         }
@@ -257,7 +263,8 @@ class control
     public function populate()
     {
         $this->val();
-        if (isset($this->val))
+        
+        if ($this->sync_value && isset($this->val))
         {
             $this->attributes['value'] = $this->val;
         }
