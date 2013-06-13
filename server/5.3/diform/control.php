@@ -106,8 +106,10 @@ class control
      */
     public function __get($name)
     {
+        if (isset($this->$name)) return $this->$name;
+        
         return method_exists($this, $name) ? 
-            $this->$name() : 
+            ($this->$name = $this->$name()) : 
             (isset($this->attributes[$name]) ?
                 $this->attributes[$name] : 
                 null
@@ -280,7 +282,7 @@ class control
     public function render($return = false)
     {
         $this->attrs();
-        $this->form->events->trigger('render_control', $this);
+        $this->form and $this->form->events->trigger('render_control', $this);
         $this->prepare();
         
         $return && ob_start();
@@ -452,9 +454,14 @@ class control
      */
     public function feedback($value = null)
     {
-        return (func_num_args() && (($this->{__FUNCTION__} = $value) || true)) ?
-            $this : $this->{__FUNCTION__}
-        ;
+        if (func_num_args()) {
+            $this->{__FUNCTION__} = $value;
+        }
+        else
+        {
+            $this->checkValidity();
+            return $this->{__FUNCTION__};
+        }
     }
     
     public function invalidate($error = '')
