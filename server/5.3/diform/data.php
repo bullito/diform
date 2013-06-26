@@ -22,7 +22,12 @@ class data extends extendable
      *
      * @var array 
      */
-    protected $_value = array();
+    protected $_raw = array();
+    /**
+     *
+     * @var array 
+     */
+    protected $_value;
     
     /**
      * 
@@ -54,7 +59,7 @@ class data extends extendable
                 }
                 else
                 {
-                    $this->$name = $this->_value[$name] = $value;
+                    $this->$name = $this->_raw[$name] = $value;
                 }
             }
         }
@@ -78,10 +83,31 @@ class data extends extendable
     
     /**
      * 
-     * @return array
+     * @return assoc
      */
     public function value()
     {
+        if (!isset($this->_value))
+        {
+            $this->_value = array();
+            
+            foreach($this->_diform->controls() as $key => $control)
+            {
+                if ($control->checkValidity() === true && isset($this->$key))
+                { 
+                    $nodes  =   preg_split('~\]?\[~', trim($key,']'));
+                    //var_dump($nodes);
+                    $branch =   &$this->_value;
+                    $final  =   array_pop($nodes);
+                    foreach($nodes as $node)
+                    {
+                        isset($branch[$node]) or $branch[$node] =   array();
+                        $branch =   &$branch[$node];
+                    }
+                    $branch[$final] =   $this->$key;   
+                }
+            }
+        }
         return $this->_value;
     }
     
@@ -94,6 +120,15 @@ class data extends extendable
         }
         
         return $this;
+    }
+    
+    /**
+     * 
+     * @return assoc
+     */
+    public function raw()
+    {
+        return $this->_raw;
     }
 }
 
