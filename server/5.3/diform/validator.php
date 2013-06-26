@@ -9,17 +9,30 @@ namespace diform;
  */
 class validator
 {
-
+    /**
+     *
+     * @var deep|assoc 
+     */
     public static $defaults = array(
         'feedback' => array(
             'en' => 'invalid'
         )
     );
+    
+    /**
+     *
+     * @var array|assoc
+     */
     protected static $rules    = array();
+    
+    /**
+     *
+     * @var string
+     */
     protected static $lang     = 'en';
 
     /**
-     * 
+     * Add a rule
      * @param string $matcher
      * @param callable $check
      * @param string|assoc $feedback
@@ -32,12 +45,22 @@ class validator
         static::$rules[$matcher] = compact('matcher', 'check', 'feedback');
     }
 
+    /**
+     * Checks if control is disabled or not
+     * @param control $control
+     * @return boolean
+     */
     public static function is_disabled($control)
     {
         return isset($control->attributes['disabled']) &&
             $control->attributes['disabled'];
     }
 
+    /**
+     * Tries to retrieve a rule according to $attribute.
+     * @param type $attribute
+     * @return type
+     */
     public static function rules4Attribute($attribute)
     {
         return isset(static::$rules["[$attribute]"]) ?
@@ -68,6 +91,12 @@ class validator
         return true;
     }
 
+    /**
+     * Returns feedback according to control and rule params
+     * @param control $control
+     * @param assoc $rule
+     * @return string
+     */
     public static function feedback4ControlAndRule($control, $rule)
     {
         if (($feedback = $control->attr('data-message')))
@@ -93,6 +122,11 @@ class validator
         return static::$defaults['feedback'] ? : 'invalid';
     }
 
+    /**
+     * Retrieves lang used for control
+     * @param control $control
+     * @return string
+     */
     public static function lang4Control($control)
     {
         if (isset($control->lang))
@@ -104,6 +138,10 @@ class validator
         return self::$lang;
     }
 
+    /**
+     * 
+     * @return assoc
+     */
     public static function feedbacks()
     {
         $feedbacks = array('*' => static::$defaults['feedback']);
