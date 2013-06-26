@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Description of diform
  * @author Buu-Lâm LÊ buulam.le[at]gmail.com
@@ -348,6 +347,15 @@ class diform
     {
         $this->events->on($event, $callback);
         return $this;
+    }
+    
+    /**
+     * Returns controls of form
+     * @return array
+     */
+    public function controls()
+    {
+        return $this->controls;
     }
 }
 
