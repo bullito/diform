@@ -44,10 +44,16 @@ class dataTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testIsPopulated().
      */
     public function testIsPopulated() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        
+        $form   =   diform()->chain()->text('a');
+        $this->assertFalse($form->data->isPopulated());
+        
+        $form->data->request(array('a' => 'populate'));
+        $this->assertTrue($form->data->isPopulated());
+        
+        
+        $_POST['a'] = 'populated';
+        $this->assertTrue(diform()->chain()->text('a')->data->isPopulated());
     }
 
     /**
@@ -126,11 +132,14 @@ class dataTest extends \PHPUnit_Framework_TestCase {
      * @covers diform\data::request
      * @todo   Implement testRequest().
      */
-    public function testRequest() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testRequest() 
+    {
+        $this->object->request(array('a' => 'b', 'c' => array('d' => 'e')));
+        $this->assertObjectHasAttribute('a', $this->object);
+        $this->assertEquals('b', $this->object->a);
+        $this->assertObjectNotHasAttribute('c', $this->object);
+        $this->assertEquals('e', $this->object->{'c[d]'});
+        
     }
 
     /**
@@ -138,10 +147,17 @@ class dataTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testRaw().
      */
     public function testRaw() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        
+        $this->object->request(array(
+            'a' => 'b', 
+            'c' => array('d' => 'e'),
+            'f' => array(1, 2, 3)
+        ));
+        $this->assertEquals(array(
+            'a' => 'b',
+            'c[d]' => 'e',
+            'f' => array(1, 2, 3)
+        ), $this->object->raw());
     }
 
 }
