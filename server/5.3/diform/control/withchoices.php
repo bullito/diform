@@ -1,12 +1,14 @@
 <?php
+
 namespace diform\control;
+
 /**
  * Description of multiple
  *
  * @author ble
  */
-class withchoices extends \diform\control 
-{
+class withchoices extends \diform\control {
+
     /**
      *
      * @var assoc|\Traversable 
@@ -14,129 +16,118 @@ class withchoices extends \diform\control
     protected $choices = array();
     protected $sub_control;
     protected $labelization;
-    
-    public function subname()
-    {
+
+    public function subname() {
         return '';
     }
-    
-    public function prepare()
-    {
-        $this->content  =   '';
-        foreach($this->items() as $item)
-        {
-            $this->content  .=   $this->render_item($item);
+
+    public function prepare() {
+        $this->content = '';
+        foreach ($this->items() as $item) {
+            $this->content .= $this->render_item($item);
         }
-        
+
         return $this;
     }
-    
-    
-    public function items()
-    {
-        $items  =   array();
-        
-        $control   =   "\\diform\\control\\$this->sub_control";
-        
-        $item_model   =   new $control($this->form);
-        
+
+    public function items() {
+        $items = array();
+
+        $control = "\\diform\\control\\$this->sub_control";
+
+        $item_model = new $control($this->form);
+
         /**
          * @todo manage optgroup
          */
         $val = $this->val();
-        
-        foreach($this->choices as $label => $value)
-        {
-            $item          =   clone $item_model;
+
+        foreach ($this->choices as $label => $value) {
+            $item = clone $item_model;
             $item
-                ->label(is_string($label) ? $label : $value)
-                ->attr('value', $value)
+                    ->label(is_string($label) ? $label : $value)
+                    ->attr('value', $value)
             ;
-            
-            if (isset($val))
-            {
+
+            if (isset($val)) {
                 $item->val($val);
             }
-            $items[]    =   $item;
+            $items[] = $item;
         }
-        
+
         return $items;
     }
-    
-    public function render_item($item)
-    {
-        if (is_array($this->labelization))
-        {
-            switch($this->labelization['type'])
-            {
+
+    public function render_item($item) {
+        if (is_array($this->labelization)) {
+            switch ($this->labelization['type']) {
                 case 'none':
                 case 'off':
                     break;
                 case 'out':
-                    isset($item->attributes['id']) or ($item->attributes['id'] =   
-                        preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name']) 
-                        . '-' .
-                        preg_replace('/([^0-9a-zA-Z_])/', '_', $item->attributes['value'])
-                    );
-                    $label      =   "<label for=\"{$item->attributes['id']}\">$item->label</label>"; 
-                    //  no break
+                    isset($item->attributes['id']) or ($item->attributes['id'] =
+                            preg_replace('/([^0-9a-zA-Z_])/', '_', $this->attributes['name'])
+                            . '-' .
+                            preg_replace('/([^0-9a-zA-Z_])/', '_', $item->attributes['value'])
+                            );
+                    $label = "<label for=\"{$item->attributes['id']}\">$item->label</label>";
+                //  no break
                 case 'in':
                     isset($label) || $label = $item->label;
-                    $control    =   $item->render(true);
-                    
-                    switch($this->labelization['value'])
-                    {
-                        case 'left':     $render =   $label.$control;
-                        case 'right':    $render =   $control.$label;
+                    $control = $item->render(true);
+
+                    switch ($this->labelization['value']) {
+                        case 'left': $render = $label . $control;
+                        case 'right': $render = $control . $label;
                     }
-                    
+
                     return ($this->labelization['type'] == 'in') ? "<label>$render</label>" : $render;
-                    
+
                 case 'custom':
                 case 'func':
-                    $func   =   $this->labelization['value'];
+                    $func = $this->labelization['value'];
                     return $func($item);
-                
+
                 default:
-                    throw new \diform\exception(__METHOD__.": labelization [$this->labelization] not supported");
+                    throw new \diform\exception(__METHOD__ . ": labelization [$this->labelization] not supported");
             }
-        }
-        else
-        {
+        } else {
             return $item->render(true);
         }
     }
-    
-    public function choices(/* $value */)
-    {
-        if (func_num_args() == 1)
-        {
+
+    public function choices(/* $value */) {
+        if (func_num_args() == 1) {
             $this->{__FUNCTION__} = func_get_arg(0);
             return $this;
-        }
-        else
-        {
+        } else {
             return $this->{__FUNCTION__};
-        }  
+        }
     }
-    
-    public function populate()
-    {
+
+    public function populate() {
         return $this;
     }
-    
+
     /**
      * 
      * @param string $position before|outer|after|null
      */
-    public function labelization($type, $value)
-    {
-        $this->labelization =   compact('type', 'value');
+    public function labelization($type, $value) {
+        $this->labelization = compact('type', 'value');
         return $this;
     }
-    
-    public static function inchoices($control)
-    {
-        return in_array($control->val(), $control->choices());
+
+    public static function inchoices($control) {
+        
+        if (is_array($val = $control->val())) 
+        {
+            return array_intersect($val, $control->choices()) == $val;
+        } 
+        else
+        {
+            return in_array($val, $control->choices());
+        }
     }
+
 }
