@@ -34,9 +34,9 @@ class dataTest extends \PHPUnit_Framework_TestCase {
      */
     public function testExtend() {
         // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->extend(array('a' => 'b', 'c' => array('d' => 'e')));
+        $this->assertObjectHasAttribute('a', $this->object);
+        $this->assertObjectHasAttribute('c[d]', $this->object);
     }
 
     /**
