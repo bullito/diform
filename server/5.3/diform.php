@@ -359,14 +359,18 @@ class diform
     }
 }
 
-/**
- * 
- * @param array $config
- * @param array $events
- * @param array $data
- * @return \diform
- */
-function diform($config = null, $events = null, $data = null)
+if (!function_exists('diform'))
 {
-    return new diform($config, $events, $data);
+    /**
+     * diform instanciation wrapper
+     * @param array $config
+     * @param array $events
+     * @param array $data
+     * @return \diform
+     */
+    function diform($config = null, $events = null, $data = null)
+    {
+        return new diform($config, $events, $data);
+    }
 }
+
