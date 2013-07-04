@@ -11,7 +11,7 @@ class data extends extendable
 {
 
     public static $defaults = array();
-
+    public static $classmap = array();
     /**
      *
      * @var boolean 
@@ -55,6 +55,11 @@ class data extends extendable
 
                 if (is_object($value))
                 {
+                    if (isset(static::$classmap[get_class($value)]))
+                    {
+                        $map    =   static::$classmap[get_class($value)];
+                        $map($this, $value);
+                    }
                     $this->_extend($value, $name);
                 }
                 else
