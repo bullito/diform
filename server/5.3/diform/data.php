@@ -55,17 +55,23 @@ class data extends extendable
 
                 if (is_object($value))
                 {
-                    if (isset(static::$classmap[get_class($value)]))
+                    $class  =   get_class($value);
+                    
+                    if (isset(static::$classmap[$class]))
                     {
-                        $map    =   static::$classmap[get_class($value)];
-                        $map($this, $value);
+                        $map    =   static::$classmap[$class];
+                        $value  =   $map($value);
                     }
-                    $this->_extend($value, $name);
+                    
+                    if (is_object($value))
+                    {
+                        $this->_extend($value, $name);
+                        continue;
+                    }
                 }
-                else
-                {
-                    $this->$name = $this->_raw[$name] = $value;
-                }
+                
+                $this->$name = $this->_raw[$name] = $value;
+                
             }
         }
         
