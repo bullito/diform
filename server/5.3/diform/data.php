@@ -36,6 +36,7 @@ class data extends extendable
      */
     public function extend($data)
     {
+        static::$classmap or $data = json_decode(json_encode($data));
         $this->_extend($data);    //  object/array
         return $this;
     }
