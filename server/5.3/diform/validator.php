@@ -159,7 +159,7 @@ class validator
     {
         if (($rules = func_get_args()))
         {
-            static::$rules  = array_replace_recursive(static::$rules, $rules);
+            static::$rules  = array_replace_recursive(static::$rules, $rules[0]);
         }
         return static::$rules;
     }
