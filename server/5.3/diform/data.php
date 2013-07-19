@@ -36,7 +36,7 @@ class data extends extendable
      */
     public function extend($data)
     {
-        $this->_extend(json_decode(json_encode($data)));    //  object/array
+        $this->_extend($data);    //  object/array
         return $this;
     }
 
@@ -56,11 +56,23 @@ class data extends extendable
                 if (is_object($value))
                 {
                     $this->_extend($value, $name);
+                    continue;
                 }
-                else
+                else if (is_array($value))
                 {
-                    $this->$name = $this->_raw[$name] = $value;
+                    if (is_string(key($value))) 
+                    {
+                        $this->_extend($value, $name);
+                        continue;
+                    }
+                    else if (!is_scalar(current($value))) 
+                    {
+                        $this->_extend($value, $name);
+                        continue;
+                    }
                 }
+                
+                $this->$name = $this->_raw[$name] = $value;
             }
         }
         
