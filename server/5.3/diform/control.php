@@ -12,6 +12,7 @@ namespace diform;
  */
 class control
 {
+    public static $args =   array('name', 'batch');
     /**
      * \diform instance whom control is attached to
      * @var \diform 
