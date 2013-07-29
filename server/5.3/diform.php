@@ -190,21 +190,16 @@ class diform
     public function __call($type, $args)
     {
         $control = $this->control($type);
-
-        if (isset($args[0]))
+        $class      =   get_class($control);
+        
+        foreach($args as $rank => $arg)
         {
-            $control->attr('name', $args[0]);
-            
-            
+            if (isset($class::$args[$rank]))
+            {
+                $control->{$class::$args[$rank]}($arg);
+            }
         }
-        if (isset($args[1]))
-        {
-            $control->val($args[1]);
-        }
-        if (isset($args[2]) && is_array($args[2]))
-        {
-            $control->batch($args[2]);
-        }
+        
         return $this->add($control);
     }
 
