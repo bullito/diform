@@ -69,7 +69,20 @@ class data extends extendable
                         continue;
                     }
                 }
-
+                else if (is_array($value))
+                {
+                    if (is_string(key($value)))
+                    {
+                        $this->_extend($value, $name);
+                        continue;
+                    }
+                    else if (!is_scalar(current($value)))
+                    {
+                        $this->_extend($value, $name);
+                        continue;
+                    }
+                }
+                
                 $this->$name = $this->_raw[$name] = $value; 
             }
         }
