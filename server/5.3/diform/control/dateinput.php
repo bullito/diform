@@ -85,6 +85,11 @@ class dateinput extends \diform\control
                 $year !== false ? $year : date('Y')
             );
         }
+        else if (is_int($this->val()))
+        {
+            $this->_seconds =   $this->val();
+            $this->val      =   date(static::$format, $this->_seconds);
+        }
         
         return $this;
     }

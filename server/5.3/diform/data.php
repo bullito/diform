@@ -11,7 +11,7 @@ class data extends extendable
 {
 
     public static $defaults = array();
-
+    public static $classmap = array();
     /**
      *
      * @var boolean 
@@ -36,6 +36,7 @@ class data extends extendable
      */
     public function extend($data)
     {
+        static::$classmap or $data = json_decode(json_encode($data));
         $this->_extend($data);    //  object/array
         return $this;
     }
@@ -55,24 +56,22 @@ class data extends extendable
 
                 if (is_object($value))
                 {
-                    $this->_extend($value, $name);
-                    continue;
-                }
-                else if (is_array($value))
-                {
-                    if (is_string(key($value))) 
+                    $class  =   get_class($value);
+                    
+                    if (isset(static::$classmap[$class]))
                     {
-                        $this->_extend($value, $name);
-                        continue;
+                        $map    =   static::$classmap[$class];
+                        $value  =   $map($value);
                     }
-                    else if (!is_scalar(current($value))) 
+                    
+                    if (is_object($value))
                     {
                         $this->_extend($value, $name);
                         continue;
                     }
                 }
-                
-                $this->$name = $this->_raw[$name] = $value;
+
+                $this->$name = $this->_raw[$name] = $value; 
             }
         }
         
