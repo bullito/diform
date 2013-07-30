@@ -26,7 +26,7 @@ validator::rule('[maxlength]', function($control)
         $maxlength = intval($control->attributes['maxlength']);
         $length    = strlen($control->val());
 
-        return ($length === 0 || $length >= $maxlength);
+        return ($length === 0 || $length <= $maxlength);
     }, array(
     'en' => 'too long',
     'fr' => 'trop long'
