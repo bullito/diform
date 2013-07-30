@@ -12,7 +12,7 @@ validator::rule('[required]', function($control)
 
 validator::rule('[minlength]', function($control)
     {
-        $minlength = parseInt($control->attributes['minlength']);
+        $minlength = intval($control->attributes['minlength']);
         $length    = strlen($control->val());
 
         return ($length === 0 || $length >= $minlength);
@@ -23,7 +23,7 @@ validator::rule('[minlength]', function($control)
 
 validator::rule('[maxlength]', function($control)
     {
-        $maxlength = parseInt($control->attributes['maxlength']);
+        $maxlength = intval($control->attributes['maxlength']);
         $length    = strlen($control->val());
 
         return ($length === 0 || $length >= $maxlength);
