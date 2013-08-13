@@ -93,7 +93,9 @@ class diform
         
         foreach ($vector as $key => $value)
         {
-            if (in_array($value, array(null, '', false, array()), true))
+            if (in_array($value, array(null, false, array()), true))
+                continue;
+            else if ($value === '' && $key != 'value')
                 continue;
             else if ($value === true)
                 $value = $key;
