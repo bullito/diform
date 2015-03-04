@@ -27,4 +27,4 @@ $form  =   diform()->request($_POST);
     
    <p> <?= $form->submit()->val('go') ?></p>
 </form>
-<?= (int) ($form->checkValidity() === true)  ?>
+<?php var_dump($form->checkValidity())  ?>
