@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL | E_STRICT);
 
-include dirname(__DIR__).'/server/diform.php';
+include dirname(__DIR__).'/server/5.3/diform.php';
 diform::lazyLoad();
 
 $i = new \diform\control\textarea;
