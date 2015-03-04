@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Description of diform
  * @author Buu-Lâm LÊ buulam.le[at]gmail.com
@@ -13,10 +14,9 @@
  * @method \diform|\diform\control\token token(string $name = 'token') add a token to form
  * 
  */
-class diform
-{
-    /** @var string  */
+class diform {
 
+    /** @var string  */
     const PATH = __DIR__;
 
     /**
@@ -24,13 +24,13 @@ class diform
      * @var array|of|\diform\control 
      */
     protected $controls = array();
-    
+
     /**
      * allow chaining inputs or not
      * @var bool 
      */
     protected $_chained = false;
-    
+
     /**
      *
      * @var \diform\config 
@@ -55,27 +55,25 @@ class diform
      */
     public $attributes = array();
 
-
     /**
      * Activate/deactivate lazyloading for diform.
      * Lazy Load is not auto-enabled because of possible redundancy
      * with other strategies when integrating in a framework / project.
-     * @param bool $boo
+     * @param bool $activate
      */
-    public static function lazyLoad($boo = true)
-    {
-        if ($boo)
+    public static function lazyLoad($activate = true) {
+        if ($activate) {
             spl_autoload_register(array(__CLASS__, 'loadClass'));
-        else
+        } else {
             spl_autoload_unregister(array(__CLASS__, 'loadClass'));
+        }
     }
 
     /**
      * autoload method
      * @param string $class
      */
-    public static function loadClass($class)
-    {
+    public static function loadClass($class) {
         $path = self::PATH . '/' . str_replace('\\', '/', $class) . '.php';
         if (file_exists($path))
             include $path;
@@ -87,12 +85,10 @@ class diform
      * @param array|Traversable $vector
      * @return string
      */
-    public static function attrs($vector)
-    {
+    public static function attrs($vector) {
         $arr = array();
-        
-        foreach ($vector as $key => $value)
-        {
+
+        foreach ($vector as $key => $value) {
             if (in_array($value, array(null, false, array()), true))
                 continue;
             else if ($value === '' && $key != 'value')
@@ -103,7 +99,7 @@ class diform
                 $value = implode(' ', array_map(array(get_class(), 'escape'), $value));
             else
                 $value = static::escape($value);
-            
+
             $arr[] = "$key=\"$value\"";
         }
         return implode(' ', $arr);
@@ -114,21 +110,19 @@ class diform
      * @param string $value
      * @return string
      */
-    public static function escape($value)
-    {
+    public static function escape($value) {
         return str_replace(array("'", '"'), array('&#39;', '&quot;'), stripslashes($value));
     }
+
     /**
      * 
      * @param array $config
      * @param array $events
      * @param array $data
      */
-    public function __construct($config = null, $events = null, $data = null)
-    {
-        foreach(array('config', 'events', 'data') as $prop)
-        {
-            $class  =   '\\diform\\'.$prop;
+    public function __construct($config = null, $events = null, $data = null) {
+        foreach (array('config', 'events', 'data') as $prop) {
+            $class = '\\diform\\' . $prop;
             $this->$prop = new $class($this, $$prop);
         }
     }
@@ -138,27 +132,26 @@ class diform
      * @param type $boo
      * @return \diform
      */
-    public function chain($boo = true)
-    {
+    public function chain($boo = true) {
         $this->_chained = $boo;
-        
+
         return $this;
     }
+
     /**
      * Alternate way to the add a control
-     * @param string $type
      * @param string $name
+     * @param string $type
      * @param mixed $value
-     * @param array $options
+     * @param array $batch
      * @return \diform
      */
-    public function __invoke($name, $type = 'text', $value = null, $batch = null)
-    {
+    public function __invoke($name, $type = 'text', $value = null, $batch = null) {
         return $this->add(
-            $this->control($type)
-                ->attr('name', $name)
-                ->val($value)
-                ->batch($batch)
+                $this->control($type)
+                    ->attr('name', $name)
+                    ->val($value)
+                    ->batch($batch)
         );
     }
 
@@ -167,41 +160,33 @@ class diform
      * @param string $type
      * @return \diform\control
      */
-    public function control($type)
-    {
-        $class_default  = '\\diform\\control';
-        if (class_exists($class = $class_default . '\\' . $type))
-        {
+    public function control($type) {
+        $class_default = '\\diform\\control';
+        if (class_exists($class = $class_default . '\\' . $type)) {
             return new $class($this);
-        }
-        else
-        {
-            $control    =   new $class_default($this);
+        } else {
+            $control = new $class_default($this);
             $control->attr('type', $type);
             return $control;
         }
     }
-    
+
     /**
      * Alternate way to the add a control
-     * @tutorial hh
      * @param string $type
      * @param args $args
      * @return \diform|\diform\control
      */
-    public function __call($type, $args)
-    {
+    public function __call($type, $args) {
         $control = $this->control($type);
-        $class      =   get_class($control);
-        
-        foreach($args as $rank => $arg)
-        {
-            if (isset($class::$args[$rank]))
-            {
+        $class = get_class($control);
+
+        foreach ($args as $rank => $arg) {
+            if (isset($class::$args[$rank])) {
                 $control->{$class::$args[$rank]}($arg);
             }
         }
-        
+
         return $this->add($control);
     }
 
@@ -210,23 +195,17 @@ class diform
      * @param \diform\control $control
      * @return \diform|\diform\control
      */
-    public function add($control)
-    {
+    public function add($control) {
         $name = $control->attr('name');
-        
-        if (!isset($name))
-        {
+
+        if (!isset($name)) {
             $this->controls[] = $control;
-        }
-        else if (preg_match('/^(.+)\[\]$/', $name, $matches))
-        {
+        } else if (preg_match('/^(.+)\[\]$/', $name, $matches)) {
             $this->controls[$matches[1]][] = $control;
-        }
-        else
-        {
+        } else {
             $this->controls[$name] = $control;
         }
-    
+
         return $this->_chained ? $this : $control;
     }
 
@@ -235,8 +214,7 @@ class diform
      * @param string $name
      * @return \diform\control|boolean
      */
-    public function __get($name)
-    {
+    public function __get($name) {
         return isset($this->controls[$name]) ?
             $this->controls[$name] : false
         ;
@@ -245,10 +223,9 @@ class diform
     /**
      * set/get \diform\config instance
      * @param array|\Traversable $config
-     * @return \diform\config
+     * @return \diform\config|\diform
      */
-    public function config(/* $config */)
-    {
+    public function config(/* $config */) {
         return (func_num_args() && ($this->{__FUNCTION__}->extend(func_get_arg(0)))) ?
             $this : $this->{__FUNCTION__}
         ;
@@ -257,10 +234,9 @@ class diform
     /**
      * set/get \diform\data instance
      * @param array|\Traversable $data
-     * @return diform\data
+     * @return \diform\data|\diform
      */
-    public function data(/* $data */)
-    {
+    public function data(/* $data */) {
         return (func_num_args() && ($this->{__FUNCTION__}->extend(func_get_arg(0)))) ?
             $this : $this->{__FUNCTION__}
         ;
@@ -269,43 +245,36 @@ class diform
     /**
      * check Validity of the form.
      * Returns true or an assoc of all errors (one by control)
-     * @return boolean|array
+     * @return boolean|array|of|string
      */
-    public function checkValidity()
-    {
+    public function checkValidity() {
         $errors = array();
-        foreach ($this->controls as $control)
-        {
-            if (($name = $control->name))
-            {
-                if (is_string($error = $control->checkValidity()))
-                {
+        foreach ($this->controls as $control) {
+            if (($name = $control->name)) {
+                if (is_string($error = $control->checkValidity())) {
                     $errors[$name] = $error;
                 }
             }
         }
-
         return $errors ? : true;
     }
 
     /**
      * set/get lang (en, fr, ...)
-     * @return type
+     * @return string|\diform
      */
-    public function lang(/* $value */)
-    {
+    public function lang(/* $value */) {
         return (func_num_args() && (($this->{__FUNCTION__} = func_get_arg(0)) || true)) ?
             $this : $this->{__FUNCTION__}
         ;
     }
 
     /**
-     * 
+     * Displays or returns render
      * @param bool $return
      * @return string|\diform
      */
-    public function render($return = false)
-    {
+    public function render($return = false) {
         $this->events->trigger('render_form', $this);
 
         $return && ob_start();
@@ -318,8 +287,7 @@ class diform
      * 
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->render(true);
     }
 
@@ -328,36 +296,34 @@ class diform
      * @param array $request
      * @return \diform
      */
-    public function request($request)
-    {
+    public function request($request) {
         $this->data->request($request);
         return $this;
     }
-    
+
     /**
-     * add a trigger event to form
+     * Adds a trigger event to form
      * @param string $event
      * @param callable $callback
      * @return \diform
      */
-    public function on($event, $callback)
-    {
+    public function on($event, $callback) {
         $this->events->on($event, $callback);
         return $this;
     }
-    
+
     /**
      * Returns controls of form
      * @return array
      */
-    public function controls()
-    {
+    public function controls() {
         return $this->controls;
     }
+
 }
 
-if (!function_exists('diform'))
-{
+if (!function_exists('diform')) {
+
     /**
      * diform instanciation wrapper
      * @param array $config
@@ -365,9 +331,9 @@ if (!function_exists('diform'))
      * @param array $data
      * @return \diform
      */
-    function diform($config = null, $events = null, $data = null)
-    {
+    function diform($config = null, $events = null, $data = null) {
         return new diform($config, $events, $data);
     }
+
 }
 
