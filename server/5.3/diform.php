@@ -59,10 +59,10 @@ class diform {
      * Activate/deactivate lazyloading for diform.
      * Lazy Load is not auto-enabled because of possible redundancy
      * with other strategies when integrating in a framework / project.
-     * @param bool $activate
+     * @param bool $enable
      */
-    public static function lazyLoad($activate = true) {
-        if ($activate) {
+    public static function lazyLoad($enable = true) {
+        if ($enable) {
             spl_autoload_register(array(__CLASS__, 'loadClass'));
         } else {
             spl_autoload_unregister(array(__CLASS__, 'loadClass'));
@@ -75,8 +75,9 @@ class diform {
      */
     public static function loadClass($class) {
         $path = self::PATH . '/' . str_replace('\\', '/', $class) . '.php';
-        if (file_exists($path))
+        if (file_exists($path)) {
             include $path;
+        }
     }
 
     /**
@@ -87,26 +88,25 @@ class diform {
      */
     public static function attrs($vector) {
         $arr = array();
-
         foreach ($vector as $key => $value) {
-            if (in_array($value, array(null, false, array()), true))
+            if (in_array($value, array(null, false, array()), true)) {
                 continue;
-            else if ($value === '' && $key != 'value')
+            } else if ($value === '' && $key != 'value') {
                 continue;
-            else if ($value === true)
+            } else if ($value === true) {
                 $value = $key;
-            else if (is_array($value))
+            } else if (is_array($value)) {
                 $value = implode(' ', array_map(array(get_class(), 'escape'), $value));
-            else
+            } else {
                 $value = static::escape($value);
-
+            }
             $arr[] = "$key=\"$value\"";
         }
         return implode(' ', $arr);
     }
 
     /**
-     * prepares attribute value to be rendered (codeigniter style)
+     * prepares attribute value to be html-rendered (codeigniter style)
      * @param string $value
      * @return string
      */
@@ -129,12 +129,11 @@ class diform {
 
     /**
      * Enables/disables chaining inputs declaration
-     * @param type $boo
+     * @param type $enabled
      * @return \diform
      */
-    public function chain($boo = true) {
-        $this->_chained = $boo;
-
+    public function chain($enabled = true) {
+        $this->_chained = $enabled;
         return $this;
     }
 
@@ -250,10 +249,8 @@ class diform {
     public function checkValidity() {
         $errors = array();
         foreach ($this->controls as $control) {
-            if (($name = $control->name)) {
-                if (is_string($error = $control->checkValidity())) {
-                    $errors[$name] = $error;
-                }
+            if (($name = $control->name) && is_string($error = $control->checkValidity())) {
+                $errors[$name] = $error;
             }
         }
         return $errors ? : true;
@@ -314,7 +311,7 @@ class diform {
 
     /**
      * Returns controls of form
-     * @return array
+     * @return array|of|diform\control
      */
     public function controls() {
         return $this->controls;
