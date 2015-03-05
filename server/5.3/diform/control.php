@@ -105,9 +105,9 @@ class control {
      * @return mixed
      */
     public function __get($name) {
-        if (isset($this->$name))
+        if (isset($this->$name)) {
             return $this->$name;
-
+        }
         return method_exists($this, $name) ?
             ($this->$name = $this->$name()) :
             (isset($this->attributes[$name]) ?
