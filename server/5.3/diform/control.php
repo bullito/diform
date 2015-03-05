@@ -107,14 +107,13 @@ class control {
     public function __get($name) {
         if (isset($this->$name)) {
             return $this->$name;
+        } else if (method_exists($this, $name)) {
+            return $this->$name = $this->$name();
+        } else if (isset($this->attributes[$name])) {
+            return $this->attributes[$name];
+        } else {
+            return null;
         }
-        return method_exists($this, $name) ?
-            ($this->$name = $this->$name()) :
-            (isset($this->attributes[$name]) ?
-                $this->attributes[$name] :
-                null
-            )
-        ;
     }
 
     /**
