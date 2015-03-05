@@ -29,7 +29,7 @@ class extendable
     {
         if (isset($data))
         {
-            foreach ($data as $key => $val)
+            foreach ($data as $key => $val) 
                 $this->$key = $val;
         }
         
