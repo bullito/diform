@@ -45,6 +45,6 @@ $f->render();
     <?= $f->submit() ?> 
     <?= $f->{'test[qsf][sdf]'}->class('clla ggfh')->addClass('df')->removeClass('clla')->value('eee') ?> 
 </form>
-<?
+<?php
 
 //var_dump($f);
